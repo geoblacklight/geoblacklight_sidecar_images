@@ -1,4 +1,21 @@
 namespace :geoblacklight_sidecar_images do
+  namespace :sample_data
+    desc "Ingests a directory of geoblacklight.json files"
+    task :ingest, [:directory] => :environment do |_t, args|
+      args.with_defaults(directory: 'data')
+      Dir.glob(File.join(args[:directory], '**', '*.json')).each do |fn|
+        puts "Ingesting #{fn}"
+        begin
+          Blacklight.default_index.connection.add(JSON.parse(File.read(fn)))
+        rescue => e
+          puts "Failed to ingest #{fn}: #{e.inspect}"
+        end
+      end
+      puts "Committing changes to Solr"
+      Blacklight.default_index.connection.commit
+    end
+  end
+  
   namespace :images do
     desc 'Pre-cache all images'
     task :precache_all, [:override_existing] => [:environment] do |_t, args|
