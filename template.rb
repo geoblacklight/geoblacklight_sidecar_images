@@ -1,5 +1,4 @@
-# $ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight_sidecar_images/master/template.rb
-
+# $ rails _5.1.4_ new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight_sidecar_images/master/template.rb
 
 gem 'blacklight', '>= 6.3'
 gem 'geoblacklight', '>= 1.4'
