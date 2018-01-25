@@ -1,6 +1,11 @@
 .bundle/
 log/*.log
 pkg/
+Gemfile.lock
+.rvmrc
+jetty
+tmp
+spec/internal
 spec/test_app/db/*.sqlite3
 spec/test_app/db/*.sqlite3-journal
 spec/test_app/log/*.log
