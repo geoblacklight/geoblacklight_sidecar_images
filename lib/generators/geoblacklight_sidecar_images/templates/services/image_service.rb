@@ -40,7 +40,7 @@ class ImageService
 
   private
 
-  # Returns geoserver auth credentials if the document is a restriced Princeton WMS layer.
+  # Returns geoserver auth credentials if the document is a restriced Local WMS layer.
   def geoserver_credentials
     return unless restricted_wms_layer?
     Settings.PROXY_GEOSERVER_AUTH.gsub('Basic ', '')
@@ -94,7 +94,7 @@ class ImageService
   end
 
   # Returns the thumbnail url.
-  # If the layer is restriced Princeton WMS, and the geoserver credentials
+  # If the layer is restriced Local WMS, and the geoserver credentials
   # have not been set beyond the default, then a thumbnail url from
   # dct references is used instead.
   def image_url
@@ -109,14 +109,14 @@ class ImageService
     end
   end
 
-  # Checks if the document is Princeton restriced access and is a scanned map.
+  # Checks if the document is Local restriced access and is a scanned map.
   def restricted_scanned_map?
-    @document.princeton_restricted? && @document['layer_geom_type_s'] == 'Image'
+    @document.local_restricted? && @document['layer_geom_type_s'] == 'Image'
   end
 
-  # Checks if the document is Princeton restriced access and is a wms layer.
+  # Checks if the document is Local restriced access and is a wms layer.
   def restricted_wms_layer?
-    @document.princeton_restricted? && @document.viewer_protocol == 'wms'
+    @document.local_restricted? && @document.viewer_protocol == 'wms'
   end
 
   # Gets the url for a specific service endpoint if the item is
