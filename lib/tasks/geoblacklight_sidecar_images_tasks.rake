@@ -1,5 +1,5 @@
 namespace :geoblacklight_sidecar_images do
-  namespace :sample_data
+  namespace :sample_data do
     desc "Ingests a directory of geoblacklight.json files"
     task :ingest, [:directory] => :environment do |_t, args|
       args.with_defaults(directory: 'data')
@@ -15,7 +15,7 @@ namespace :geoblacklight_sidecar_images do
       Blacklight.default_index.connection.commit
     end
   end
-  
+
   namespace :images do
     desc 'Pre-cache all images'
     task :precache_all, [:override_existing] => [:environment] do |_t, args|
