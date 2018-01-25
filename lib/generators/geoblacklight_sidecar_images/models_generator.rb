@@ -17,7 +17,7 @@ module GeoblacklightSidecarImages
 
     # Setup the database migrations
     def copy_migrations
-      rake 'geoblacklight_sidecar_images_engine:install:migrations'
+      rake 'geoblacklight_sidecar_images:install:migrations'
     end
 
     def include_sidecar_solrdocument
