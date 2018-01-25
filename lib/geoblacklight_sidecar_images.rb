@@ -1,0 +1,3 @@
+module GeoblacklightSidecarImages
+  # Your code goes here...
+end
