@@ -14,7 +14,7 @@ module GeoblacklightSidecarImages
         PROXY_GEOSERVER_AUTH: <%= ENV['PROXY_GEOSERVER_AUTH'] || "Basic base64encodedusername:password" %>
       SETTINGS
 
-      inject_into_file 'config/settings.yml', settings, before: /^end/
+      inject_into_file 'config/settings.yml', settings, :after => "INSTITUTION: 'Stanford'\n"
     end
 
     def add_carrierwave_require
