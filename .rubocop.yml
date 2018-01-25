@@ -1,0 +1,70 @@
+Rails:
+  Enabled: true
+
+AllCops:
+  DisplayCopNames: true
+
+  Include:
+  - '**/Rakefile'
+
+  Exclude:
+  - 'db/**/*'
+  - 'vendor/**/*'
+  - '.internal_test_app/**/*'
+  - 'lib/generators/geoblacklight/templates/**/*'
+
+Metrics/LineLength:
+  Max: 100
+  Exclude:
+  - 'spec/**/*'
+  - 'Rakefile'
+  - 'lib/generators/geoblacklight/install_generator.rb'
+
+# TODO: Refactor large methods.
+Metrics/AbcSize:
+  Max: 23
+
+Metrics/MethodLength:
+  Max: 16
+
+# TODO: Add top-level class and module documentation.
+Style/Documentation:
+  Enabled: false
+
+# Overrides method in blacklight. Must use method name.
+Style/PredicateName:
+  Exclude:
+    - 'lib/geoblacklight/view_helper_override.rb'
+
+RSpec/FilePath:
+  Enabled: false
+
+# Rubocop bug causes view specs to fail.
+#  https://github.com/nevir/rubocop-rspec/issues/47
+RSpec/DescribeClass:
+  Enabled: false
+
+# geoblacklight references in solr_document_spec are
+# difficult to mock because of the use of 'method_missing'.
+# https://relishapp.com/rspec/rspec-mocks/docs/verifying-doubles/dynamic-classes
+RSpec/AnyInstance:
+  Exclude:
+    - 'spec/models/concerns/geoblacklight/solr_document_spec.rb'
+
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/StringLiterals:
+  Description: Checks if uses of quotes match the configured preference.
+  StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-string-literals
+  Enabled: true
+  EnforcedStyle: single_quotes
+
+Style/DotPosition:
+  Description: Checks the position of the dot in multi-line method calls.
+  StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-multi-line-chains
+  Enabled: true
+  EnforcedStyle: leading
+  SupportedStyles:
+  - leading
+  - trailing
