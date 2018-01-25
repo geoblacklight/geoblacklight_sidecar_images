@@ -4,19 +4,25 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
-require 'rdoc/task'
+require 'solr_wrapper'
+require 'engine_cart/rake_task'
+require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
+require 'geoblacklight_sidecar_images/version'
 
-RDoc::Task.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'GeoblacklightSidecarImages'
-  rdoc.options << '--line-numbers'
-  rdoc.rdoc_files.include('README.md')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+EngineCart.fingerprint_proc = EngineCart.rails_fingerprint_proc
+
+task ci: ['engine_cart:generate'] do
+  ENV['environment'] = 'test'
+
+  SolrWrapper.wrap(port: '8983') do |solr|
+    solr.with_collection(name: 'blacklight-core', dir: File.join(File.expand_path(File.dirname(__FILE__)), 'solr_conf', 'conf')) do
+      #Rake::Task['spotlight:fixtures'].invoke
+
+      # run the tests
+      Rake::Task['spec'].invoke
+    end
+  end
 end
 
-APP_RAKEFILE = File.expand_path("spec/test_app/Rakefile", __dir__)
-load 'rails/tasks/engine.rake'
-
-load 'rails/tasks/statistics.rake'
-
-require 'bundler/gem_tasks'
+task default: [:rubocop, :ci]
