@@ -21,6 +21,9 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", '>= 4.2', '< 6'
   s.add_dependency "blacklight", '~> 6.0'
   s.add_dependency "geoblacklight", '~> 1.7'
+  s.add_dependency 'carrierwave'
+  s.add_dependency 'mini_magick'
+
   s.add_development_dependency 'rspec-rails', "~> 3.0"
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'solr_wrapper'
