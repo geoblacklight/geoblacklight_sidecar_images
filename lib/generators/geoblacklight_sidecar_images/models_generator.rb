@@ -35,7 +35,6 @@ module GeoblacklightSidecarImages
         end
       SIDECAR
 
-      end
       inject_into_file 'app/models/solr_document.rb', sidecar, before: /^end/
     end
 
