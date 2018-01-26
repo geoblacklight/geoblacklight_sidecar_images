@@ -19,7 +19,7 @@ class ImageService
       logger.tagged(@document.id, 'STATUS') { logger.info 'SUCCESS' }
     rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
       logger.tagged(@document.id, 'STATUS') { logger.info 'FAILURE' }
-      logger.tagged(@document.id, 'EXCEPTION') { logger.info invalid.record.errors }
+      logger.tagged(@document.id, 'EXCEPTION') { logger.info invalid.inspect }
     end
   end
 
