@@ -4,10 +4,18 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
+Bundler::GemHelper.install_tasks
+
 require 'solr_wrapper'
-require 'engine_cart/rake_task'
+
 require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
+
 require 'rubocop/rake_task'
+RuboCop::RakeTask.new(:rubocop)
+
+require 'engine_cart/rake_task'
+EngineCart.fingerprint_proc = EngineCart.rails_fingerprint_proc
 require 'geoblacklight_sidecar_images/version'
 
 EngineCart.fingerprint_proc = EngineCart.rails_fingerprint_proc
@@ -16,7 +24,7 @@ task ci: ['engine_cart:generate'] do
   ENV['environment'] = 'test'
 
   SolrWrapper.wrap(port: '8983') do |solr|
-    solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr_conf', 'conf')) do
+    solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr', 'conf')) do
       # Fixtures here
       # Rake::Task['spotlight:fixtures'].invoke
 
