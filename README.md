@@ -12,4 +12,13 @@ This Geoblacklight plugin helps capture remote images from Geo web services and 
 
 ## Installation
 
-TODO
+Forthcoming
+
+## TODOs
+
+* EngineCart / rake ci (complete)
+* Write specs
+* Remove .png bias
+* Forgo attaching Placeholder imagery
+* Maybe AASM?
+* Rails 5.2 branch / ActionStorage
