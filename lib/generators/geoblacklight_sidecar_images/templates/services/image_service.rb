@@ -14,7 +14,7 @@ class ImageService
 
     begin
       sidecar = @document.sidecar
-      sidecar.image = image_tempfile(@document_id)
+      sidecar.image = image_tempfile(@document.id)
       sidecar.save!
       logger.tagged(@document.id, 'STATUS') { logger.info 'SUCCESS' }
     rescue ActiveRecord::RecordInvalid => invalid
