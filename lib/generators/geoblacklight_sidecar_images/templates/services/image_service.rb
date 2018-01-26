@@ -17,7 +17,7 @@ class ImageService
       sidecar.image = image_tempfile(@document.id)
       sidecar.save!
       logger.tagged(@document.id, 'STATUS') { logger.info 'SUCCESS' }
-    rescue ActiveRecord::RecordInvalid => invalid
+    rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
       logger.tagged(@document.id, 'STATUS') { logger.info 'FAILURE' }
       logger.tagged(@document.id, 'EXCEPTION') { logger.info invalid.record.errors }
     end
