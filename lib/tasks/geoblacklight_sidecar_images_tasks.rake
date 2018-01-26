@@ -37,8 +37,6 @@ namespace :geoblacklight_sidecar_images do
         num_found = results.response[:numFound]
         doc_counter = 0
         results.docs.each do |document|
-          doc_counter += 1
-          puts "#{document[:layer_slug_s]} (#{doc_counter}/#{num_found})"
           begin
             StoreImageJob.perform_later(document.to_h)
           rescue Blacklight::Exceptions::RecordNotFound
