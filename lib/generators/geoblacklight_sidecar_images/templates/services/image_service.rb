@@ -9,24 +9,17 @@ class ImageService
   #
   # @TODO: EWL
   def store
-    puts "\nDOC: #{@document.id}"
-    puts "IMG: #{image_url}"
+    logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+    logger.tagged(@document.id, 'IMG') { logger.info image_url }
 
     begin
       sidecar = @document.sidecar
-      file = Tempfile.new([@document.id, ".png"])
-      file.binmode
-      file.write(image_data[:data])
-      file.close
-
-      sidecar.image = file
+      sidecar.image = image_tempfile(@document_id)
       sidecar.save!
-
-      file.unlink
-      puts "SUCCESS\n\n"
-    rescue Exception => e
-      puts "EXCEPTION: #{e.inspect}"
-      puts "FAILURE\n\n"
+      logger.tagged(@document.id, 'STATUS') { logger.info 'SUCCESS' }
+    rescue ActiveRecord::RecordInvalid => invalid
+      logger.tagged(@document.id, 'STATUS') { logger.info 'FAILURE' }
+      logger.tagged(@document.id, 'EXCEPTION') { logger.info invalid.record.errors }
     end
   end
 
@@ -40,6 +33,14 @@ class ImageService
 
   private
 
+  def image_tempfile(document_id)
+    file = Tempfile.new([document_id, '.png'])
+    file.binmode
+    file.write(image_data[:data])
+    file.close
+    file
+  end
+
   # Returns geoserver auth credentials if the document is a restriced Local WMS layer.
   def geoserver_credentials
     return unless restricted_wms_layer?
@@ -48,16 +49,16 @@ class ImageService
 
   # Tests if geoserver credentials are set beyond the default.
   def geoserver_credentials_valid?
-    Settings.PROXY_GEOSERVER_AUTH != "Basic base64encodedusername:password"
+    Settings.PROXY_GEOSERVER_AUTH != 'Basic base64encodedusername:password'
   end
 
   def placeholder_base_path
-    Rails.root.join("app", "assets", "images")
+    Rails.root.join('app', 'assets', 'images')
   end
 
   # Generates hash containing placeholder mime_type and image.
   def placeholder_data
-    { type: "image/png", data: placeholder_image }
+    { type: 'image/png', data: placeholder_image }
   end
 
   # Gets placeholder image from disk.
@@ -67,7 +68,7 @@ class ImageService
 
   # Path to placeholder image based on the layer geometry.
   def placeholder_image_path
-    geom_type = @document.fetch("layer_geom_type_s", "").tr(" ", "-").downcase
+    geom_type = @document.fetch('layer_geom_type_s', '').tr(' ', '-').downcase
     thumb_path = "#{placeholder_base_path}/thumbnail-#{geom_type}.png"
     return "#{placeholder_base_path}/thumbnail-paper-map.png" unless File.exist?(thumb_path)
     thumb_path
@@ -76,7 +77,7 @@ class ImageService
   # Generates hash containing thumbnail mime_type and image.
   def image_data
     return placeholder_data unless image_url
-    { type: "image/png", data: remote_image }
+    { type: 'image/png', data: remote_image }
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.

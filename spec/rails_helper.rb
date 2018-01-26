@@ -1,4 +1,4 @@
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
 
 require 'spec_helper'
 
@@ -12,7 +12,6 @@ require 'geoblacklight_sidecar_images'
 
 require 'factory_girl'
 FactoryGirl.find_definitions
-
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -29,8 +28,6 @@ FactoryGirl.find_definitions
 #
 # Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
-require "support/features/sign_in"
-
 require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
@@ -43,11 +40,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    if self.class.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
+    DatabaseCleaner.strategy = if Capybara.current_driver == :rack_test
+                                 :transaction
+                               else
+                                 :truncation
+                               end
     DatabaseCleaner.start
   end
 
@@ -61,7 +58,6 @@ RSpec.configure do |config|
   config.include Features::SignIn, type: :feature
   config.include FactoryGirl::Syntax::Methods
 end
-
 
 def main_app
   Rails.application.class.routes.url_helpers

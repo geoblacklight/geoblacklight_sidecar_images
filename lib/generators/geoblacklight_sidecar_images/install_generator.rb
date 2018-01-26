@@ -8,13 +8,13 @@ module GeoblacklightSidecarImages
 
     def add_settings_vars
       settings = <<-"SETTINGS"
-INSTITUTION_LOCAL_NAME: <%= ENV['INSTITUTION_LOCAL_NAME'] || "Princeton" %>
-INSTITUTION_GEOSERVER_URL: <%= ENV['INSTITUTION_GEOSERVER_URL'] || "https://geoserver.princeton.edu" %>
-PROXY_GEOSERVER_URL: <%= ENV['PROXY_GEOSERVER_URL'] || "http://localhost:3000" %>
-PROXY_GEOSERVER_AUTH: <%= ENV['PROXY_GEOSERVER_AUTH'] || "Basic base64encodedusername:password" %>
+  INSTITUTION_LOCAL_NAME: <%= ENV['INSTITUTION_LOCAL_NAME'] || "Princeton" %>
+  INSTITUTION_GEOSERVER_URL: <%= ENV['INSTITUTION_GEOSERVER_URL'] || "https://geoserver.princeton.edu" %>
+  PROXY_GEOSERVER_URL: <%= ENV['PROXY_GEOSERVER_URL'] || "http://localhost:3000" %>
+  PROXY_GEOSERVER_AUTH: <%= ENV['PROXY_GEOSERVER_AUTH'] || "Basic base64encodedusername:password" %>
       SETTINGS
 
-      inject_into_file 'config/settings.yml', settings, :after => "INSTITUTION: 'Stanford'\n"
+      inject_into_file 'config/settings.yml', settings, after: "INSTITUTION: 'Stanford'\n"
     end
 
     def add_carrierwave_require

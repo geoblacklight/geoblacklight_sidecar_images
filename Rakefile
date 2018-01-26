@@ -16,8 +16,8 @@ task ci: ['engine_cart:generate'] do
   ENV['environment'] = 'test'
 
   SolrWrapper.wrap(port: '8983') do |solr|
-    solr.with_collection(name: 'blacklight-core', dir: File.join(File.expand_path(File.dirname(__FILE__)), 'solr_conf', 'conf')) do
-      #Rake::Task['spotlight:fixtures'].invoke
+    solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr_conf', 'conf')) do
+      # Rake::Task['spotlight:fixtures'].invoke
 
       # run the tests
       Rake::Task['spec'].invoke
@@ -25,4 +25,4 @@ task ci: ['engine_cart:generate'] do
   end
 end
 
-task default: [:rubocop, :ci]
+task default: %i[rubocop ci]

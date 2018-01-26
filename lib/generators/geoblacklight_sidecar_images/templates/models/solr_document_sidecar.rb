@@ -1,6 +1,6 @@
 ##
 # Metadata for indexed documents
-class SolrDocumentSidecar < ActiveRecord::Base
+class SolrDocumentSidecar < ApplicationRecord
   mount_uploader :image, ImageUploader
 
   belongs_to :document, required: true, polymorphic: true

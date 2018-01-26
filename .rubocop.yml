@@ -5,6 +5,7 @@ AllCops:
   DisplayCopNames: true
 
   Include:
+  - '**/Gemfile'
   - '**/Rakefile'
 
   Exclude:
@@ -12,6 +13,9 @@ AllCops:
   - 'vendor/**/*'
   - '.internal_test_app/**/*'
   - 'lib/generators/geoblacklight/templates/**/*'
+  - 'geoblacklight_sidecar_images.gemspec'
+  - 'lib/tasks/geoblacklight_sidecar_images_tasks.rake'
+  - 'template.rb'
 
 Metrics/LineLength:
   Max: 100

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails/generators'
 require 'rails/generators/migration'
 
@@ -8,12 +9,12 @@ module GeoblacklightSidecarImages
 
     source_root File.expand_path('../templates', __FILE__)
 
-    desc <<-EOS
+    desc <<-DESCRIPTION
       This generator makes the following changes to your application:
        1. Preps engine migrations
        2. Adds SolrDocumentSidecar ActiveRecord model
        3. Adds WmsRewriteConcern
-    EOS
+    DESCRIPTION
 
     # Setup the database migrations
     def copy_migrations
@@ -47,9 +48,11 @@ module GeoblacklightSidecarImages
       )
     end
 
-
     def include_wms_rewrite_solrdocument
-      inject_into_file 'app/models/solr_document.rb', after: 'include Geoblacklight::SolrDocument' do
+      inject_into_file(
+        'app/models/solr_document.rb',
+        after: 'include Geoblacklight::SolrDocument'
+      ) do
         "\n include WmsRewriteConcern"
       end
     end
