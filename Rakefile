@@ -17,6 +17,7 @@ task ci: ['engine_cart:generate'] do
 
   SolrWrapper.wrap(port: '8983') do |solr|
     solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr_conf', 'conf')) do
+      # Fixtures here
       # Rake::Task['spotlight:fixtures'].invoke
 
       # run the tests
