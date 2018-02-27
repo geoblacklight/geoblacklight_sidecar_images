@@ -6,8 +6,8 @@ class ImageService
     # @param [SolrDocument]
     # @param [Integer] thumbnail size
     # @return [String] iiif thumbnail url
-    def self.image_url(document, size)
-      "#{document.viewer_endpoint.gsub('info.json', '')}full/#{size},/0/default.png"
+    def self.image_url(document, size, image_extension='.jpg')
+      "#{document.viewer_endpoint.gsub('info.json', '')}full/#{size},/0/default#{image_extension}"
     end
   end
 end

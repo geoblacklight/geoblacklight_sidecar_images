@@ -8,7 +8,7 @@ class ImageService
     # @param [SolrDocument]
     # @param [Integer] thumbnail size
     # @return [String] wms thumbnail url
-    def self.image_url(document, size)
+    def self.image_url(document, _size, _image_extension)
       # Swap proxy url with princeton geoserver url.
       # Thumbnail requests send geoserver auth.
       endpoint = document.viewer_endpoint.gsub(Settings.PROXY_GEOSERVER_URL,

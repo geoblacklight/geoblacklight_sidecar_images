@@ -1,6 +1,13 @@
+require 'rack/mime'
+
 class ImageService
   def initialize(document)
     @document = document
+    @logger ||= ActiveSupport::TaggedLogging.new(
+      Logger.new(
+        File.join(Rails.root, '/log/', "image_service_#{Rails.env}.log")
+        )
+      )
   end
 
   # Stores the document's image in SolrDocumentSidecar
@@ -9,17 +16,15 @@ class ImageService
   #
   # @TODO: EWL
   def store
-    logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
-    logger.tagged(@document.id, 'IMG') { logger.info image_url }
-
     begin
       sidecar = @document.sidecar
       sidecar.image = image_tempfile(@document.id)
       sidecar.save!
-      logger.tagged(@document.id, 'STATUS') { logger.info 'SUCCESS' }
+      @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
+      @logger.tagged(@document.id, 'SIDECAR_IMAGE_URL') { @logger.info @document.sidecar.image_url }
     rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
-      logger.tagged(@document.id, 'STATUS') { logger.info 'FAILURE' }
-      logger.tagged(@document.id, 'EXCEPTION') { logger.info invalid.inspect }
+      @logger.tagged(@document.id, 'STATUS') { @logger.info 'FAILURE' }
+      @logger.tagged(@document.id, 'EXCEPTION') { @logger.info invalid.inspect }
     end
   end
 
@@ -34,10 +39,19 @@ class ImageService
   private
 
   def image_tempfile(document_id)
-    file = Tempfile.new([document_id, '.png'])
+
+    @logger.tagged(@document.id, 'remote_content_type') { @logger.info remote_content_type.inspect }
+    @logger.tagged(@document.id, 'viewer_protocol') { @logger.info @document.viewer_protocol.inspect }
+    @logger.tagged(@document.id, 'service_url') { @logger.info service_url.inspect }
+    @logger.tagged(@document.id, 'image_extension') { @logger.info image_extension.inspect }
+
+    file = Tempfile.new([document_id, image_extension])
     file.binmode
     file.write(image_data[:data])
     file.close
+
+    @logger.tagged(@document.id, 'IMAGE_TEMPFILE') { @logger.info file.inspect }
+
     file
   end
 
@@ -77,7 +91,30 @@ class ImageService
   # Generates hash containing thumbnail mime_type and image.
   def image_data
     return placeholder_data unless image_url
-    { type: 'image/png', data: remote_image }
+    { type: remote_content_type, data: remote_image }
+  end
+
+  # Gets thumbnail image from URL. On error, returns document's placeholder image.
+  def remote_content_type
+    begin
+      auth = geoserver_credentials
+      conn = Faraday.new(url: image_url) { |b|
+        b.use FaradayMiddleware::FollowRedirects
+        b.adapter :net_http
+      }
+      conn.options.timeout = timeout
+      conn.options.timeout = timeout
+      conn.authorization :Basic, auth if auth
+
+      conn.head.headers['content-type']
+    rescue Faraday::Error::ConnectionFailed
+      return placeholder_data[:type]
+    rescue Faraday::Error::TimeoutError
+      return placeholder_data[:type]
+    rescue => error
+      # puts error.inspect
+      return placeholder_data[:type]
+    end
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
@@ -87,6 +124,7 @@ class ImageService
     conn.options.timeout = timeout
     conn.options.timeout = timeout
     conn.authorization :Basic, auth if auth
+
     conn.get.body
   rescue Faraday::Error::ConnectionFailed
     return placeholder_image
@@ -110,6 +148,11 @@ class ImageService
     end
   end
 
+  # Determines the image file extension
+  def image_extension
+    @image_extension ||= Rack::Mime::MIME_TYPES.rassoc(remote_content_type).try(:first) || '.png'
+  end
+
   # Checks if the document is Local restriced access and is a scanned map.
   def restricted_scanned_map?
     @document.local_restricted? && @document['layer_geom_type_s'] == 'Image'
@@ -126,12 +169,14 @@ class ImageService
   # from the viewer protocol, and if it's loaded, the image_url
   # method is called.
   def service_url
-    return unless @document.available?
-    protocol = @document.viewer_protocol
-    return if protocol == 'map' || protocol.nil?
-    "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
-  rescue NameError
-    return nil
+    @service_url ||= begin
+      return unless @document.available?
+      protocol = @document.viewer_protocol
+      return if protocol == 'map' || protocol.nil?
+      "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
+    rescue NameError
+      return nil
+    end
   end
 
   # Retreives a url to a static thumbnail from the document's dct_references field, if it exists.
