@@ -6,7 +6,7 @@ class ImageService
     # @param [SolrDocument]
     # @param [Integer] thumbnail size
     # @return [String] thumbnail url
-    def self.image_url(document, _size, _image_extension)
+    def self.image_url(document, _size)
       "#{document.viewer_endpoint}/info/thumbnail/thumbnail.png"
     end
   end
