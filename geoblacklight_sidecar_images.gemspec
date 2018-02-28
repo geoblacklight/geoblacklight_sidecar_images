@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_dependency 'aasm'
-  s.add_dependency 'blacklight', '~> 6.0'
   s.add_dependency 'carrierwave'
   s.add_dependency 'geoblacklight', '~> 1.7'
   s.add_dependency 'mini_magick'

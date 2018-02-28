@@ -3,7 +3,6 @@ PATH
   specs:
     geoblacklight_sidecar_images (0.1.0)
       aasm
-      blacklight (~> 6.0)
       carrierwave
       geoblacklight (~> 1.7)
       mini_magick
