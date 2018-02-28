@@ -1,7 +1,8 @@
 ENV['RAILS_ENV'] ||= 'test'
 
-require 'spec_helper'
+# require 'spec_helper'
 
+require 'database_cleaner'
 require 'engine_cart'
 EngineCart.load_application!
 
@@ -9,9 +10,6 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 require 'geoblacklight_sidecar_images'
-
-require 'factory_girl'
-FactoryGirl.find_definitions
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -28,8 +26,8 @@ FactoryGirl.find_definitions
 #
 # Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
-require 'capybara/poltergeist'
-Capybara.javascript_driver = :poltergeist
+# require 'capybara/poltergeist'
+# Capybara.javascript_driver = :poltergeist
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
@@ -53,10 +51,6 @@ RSpec.configure do |config|
   end
 
   config.infer_spec_type_from_file_location!
-
-  config.include Devise::TestHelpers, type: :controller
-  config.include Features::SignIn, type: :feature
-  config.include FactoryGirl::Syntax::Methods
 end
 
 def main_app
