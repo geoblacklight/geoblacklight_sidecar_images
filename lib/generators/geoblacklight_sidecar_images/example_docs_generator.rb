@@ -12,7 +12,7 @@ module GeoblacklightSidecarImages
     DESCRIPTION
 
     def create_services
-      directory 'solr_documents', 'solr/geoblacklight/example_docs'
+      directory 'files', 'solr/geoblacklight/example_docs'
     end
   end
 end
