@@ -47,6 +47,10 @@ PROXY_GEOSERVER_AUTH: <%= ENV['PROXY_GEOSERVER_AUTH'] || "Basic base64encodeduse
       generate 'geoblacklight_sidecar_images:uploaders'
     end
 
+    def generate_geoblacklight_views
+      generate 'geoblacklight_sidecar_images:views'
+    end
+
     def bundle_install
       Bundler.with_clean_env do
         run 'bundle install'
