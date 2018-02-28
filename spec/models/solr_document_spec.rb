@@ -1,11 +1,14 @@
-describe SolrDocument, type: :model do
-  let(:document) { described_class.new(id: 'abcd123') }
-  subject { document }
+require 'rails_helper'
+
+describe Geoblacklight::SolrDocument do
+  let(:document) { SolrDocument.new(document_attributes) }
 
   describe '#sidecar' do
-    it 'returns a sidecar for adding fields' do
-      expect(subject.sidecar).to be_kind_of SolrDocumentSidecar
-      expect(subject.sidecar).to eq exhibit
+    let(:document_attributes) { json_data("umn_iiif_jpg") }
+
+    it 'responds to sidecar method' do
+      expect(document).to respond_to :sidecar
+      expect(document.sidecar).to be_kind_of SolrDocumentSidecar
     end
   end
 end
