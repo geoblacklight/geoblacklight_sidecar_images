@@ -1,7 +1,6 @@
 ENV['RAILS_ENV'] ||= 'test'
 
-# require 'spec_helper'
-
+require 'spec_helper'
 require 'database_cleaner'
 require 'engine_cart'
 EngineCart.load_application!
@@ -55,9 +54,4 @@ end
 
 def main_app
   Rails.application.class.routes.url_helpers
-end
-
-def json_data(filename)
-  file_content = file_fixture("#{filename}.json").read
-  JSON.parse(file_content, symbolize_names: true)
 end
