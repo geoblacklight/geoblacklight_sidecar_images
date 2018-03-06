@@ -3,7 +3,9 @@ source 'https://rubygems.org'
 # Declare your gem's dependencies in geoblacklight_sidecar_images.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
-gemspec
+
+# Please see geoblacklight_sidecar_images.gemspec for dependency information.
+gemspec path: File.expand_path('..', __FILE__)
 
 # Declare any dependencies that are still in development here instead of in
 # your gemspec. These might include edge Rails or gems from your path or
@@ -48,3 +50,5 @@ else
   end
 end
 # END ENGINE_CART BLOCK
+
+# eval_gemfile File.expand_path("spec/test_app_templates/Gemfile.extra", File.dirname(__FILE__))
