@@ -2,7 +2,7 @@
 
 gem 'blacklight', '>= 6.3'
 gem 'geoblacklight', '>= 1.4'
-gem 'geoblacklight_sidecar_images', github: 'ewlarson/geoblacklight_sidecar_images', branch: 'master'
+gem 'geoblacklight_sidecar_images'
 
 run 'bundle install'
 
