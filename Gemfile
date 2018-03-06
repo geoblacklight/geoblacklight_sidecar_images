@@ -20,6 +20,9 @@ gemspec
 # engine_cart stanza: 0.10.0
 # the below comes from engine_cart, a gem used to test this Rails engine gem in the context of a Rails app.
 file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
+
+puts file.inspect
+
 if File.exist?(file)
   begin
     eval_gemfile file
@@ -29,6 +32,12 @@ if File.exist?(file)
   end
 else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
+
+    gem 'aasm'
+    gem 'carrierwave'
+    gem 'geoblacklight', '~> 1.7'
+    gem 'mini_magick'
+    gem 'rails', '>= 4.2', '< 6'
 
   if ENV['RAILS_VERSION']
     if ENV['RAILS_VERSION'] == 'edge'
