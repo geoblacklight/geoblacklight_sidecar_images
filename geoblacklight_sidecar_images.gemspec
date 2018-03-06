@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'chromedriver-helper'
   s.add_development_dependency 'database_cleaner', '~> 1.3'
-  s.add_development_dependency 'engine_cart'
+  s.add_development_dependency 'engine_cart', '~> 1.0'
   s.add_development_dependency 'rspec-rails', '~> 3.0'
   s.add_development_dependency 'rubocop', '~> 0.50.0'
   s.add_development_dependency 'rubocop-rspec', '~> 1.18.0'

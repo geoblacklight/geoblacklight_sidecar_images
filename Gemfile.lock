@@ -380,7 +380,7 @@ DEPENDENCIES
   database_cleaner (~> 1.3)
   devise
   devise-guests (~> 0.6)
-  engine_cart
+  engine_cart (~> 1.0)
   geoblacklight (~> 1.7)
   geoblacklight_sidecar_images!
   jbuilder (~> 2.5)
