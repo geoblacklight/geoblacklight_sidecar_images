@@ -33,28 +33,10 @@ if File.exist?(file)
 else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
 
-    gem 'aasm'
-    gem 'carrierwave'
-    gem 'geoblacklight', '~> 1.7'
-    gem 'mini_magick'
-    gem 'rails', '>= 4.2', '< 6'
-
-  if ENV['RAILS_VERSION']
-    if ENV['RAILS_VERSION'] == 'edge'
-      gem 'rails', github: 'rails/rails'
-      ENV['ENGINE_CART_RAILS_OPTIONS'] = '--edge --skip-turbolinks'
-    else
-      gem 'rails', ENV['RAILS_VERSION']
-    end
-  end
-
-  case ENV['RAILS_VERSION']
-  when /^4.2/
-    gem 'responders', '~> 2.0'
-    gem 'sass-rails', '>= 5.0'
-    gem 'coffee-rails', '~> 4.1.0'
-  when /^4.[01]/
-    gem 'sass-rails', '< 5.0'
-  end
+  gem 'aasm'
+  gem 'carrierwave'
+  gem 'geoblacklight', '~> 1.7'
+  gem 'mini_magick'
+  gem 'rails', '>= 4.2', '< 6'
 end
 # END ENGINE_CART BLOCK
