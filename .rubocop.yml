@@ -14,19 +14,25 @@ AllCops:
   - '.internal_test_app/**/*'
   - 'lib/generators/geoblacklight/templates/**/*'
   - 'geoblacklight_sidecar_images.gemspec'
+  - 'lib/generators/geoblacklight_sidecar_images/install_generator.rb'
   - 'lib/tasks/geoblacklight_sidecar_images_tasks.rake'
   - 'template.rb'
+  - Gemfile
 
 Metrics/LineLength:
   Max: 100
   Exclude:
   - 'spec/**/*'
   - 'Rakefile'
-  - 'lib/generators/geoblacklight/install_generator.rb'
+  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
 
 # TODO: Refactor large methods.
+Metrics/ClassLength:
+  Exclude:
+  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
+
 Metrics/AbcSize:
-  Max: 23
+  Max: 28
 
 Metrics/MethodLength:
   Max: 16

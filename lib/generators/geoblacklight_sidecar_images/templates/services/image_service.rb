@@ -5,9 +5,11 @@ class ImageService
     @document = document
     @logger ||= ActiveSupport::TaggedLogging.new(
       Logger.new(
-        File.join(Rails.root, '/log/', "image_service_#{Rails.env}.log")
+        File.join(
+          Rails.root, '/log/', "image_service_#{Rails.env}.log"
         )
       )
+    )
   end
 
   # Stores the document's image in SolrDocumentSidecar
@@ -16,16 +18,14 @@ class ImageService
   #
   # @TODO: EWL
   def store
-    begin
-      sidecar = @document.sidecar
-      sidecar.image = image_tempfile(@document.id)
-      sidecar.save!
-      @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
-      @logger.tagged(@document.id, 'SIDECAR_IMAGE_URL') { @logger.info @document.sidecar.image_url }
-    rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
-      @logger.tagged(@document.id, 'STATUS') { @logger.info 'FAILURE' }
-      @logger.tagged(@document.id, 'EXCEPTION') { @logger.info invalid.inspect }
-    end
+    sidecar = @document.sidecar
+    sidecar.image = image_tempfile(@document.id)
+    sidecar.save!
+    @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
+    @logger.tagged(@document.id, 'SIDECAR_IMAGE_URL') { @logger.info @document.sidecar.image_url }
+  rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
+    @logger.tagged(@document.id, 'STATUS') { @logger.info 'FAILURE' }
+    @logger.tagged(@document.id, 'EXCEPTION') { @logger.info invalid.inspect }
   end
 
   # Returns hash containing placeholder thumbnail for the document.
@@ -39,11 +39,10 @@ class ImageService
   private
 
   def image_tempfile(document_id)
-
-    @logger.tagged(@document.id, 'remote_content_type') { @logger.info remote_content_type.inspect }
-    @logger.tagged(@document.id, 'viewer_protocol') { @logger.info @document.viewer_protocol.inspect }
-    @logger.tagged(@document.id, 'service_url') { @logger.info service_url.inspect }
-    @logger.tagged(@document.id, 'image_extension') { @logger.info image_extension.inspect }
+    @logger.tagged(@document.id, 'remote_content_type') { @logger.info remote_content_type }
+    @logger.tagged(@document.id, 'viewer_protocol') { @logger.info @document.viewer_protocol }
+    @logger.tagged(@document.id, 'service_url') { @logger.info service_url }
+    @logger.tagged(@document.id, 'image_extension') { @logger.info image_extension }
 
     file = Tempfile.new([document_id, image_extension])
     file.binmode
@@ -96,25 +95,22 @@ class ImageService
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
   def remote_content_type
-    begin
-      auth = geoserver_credentials
-      conn = Faraday.new(url: image_url) { |b|
-        b.use FaradayMiddleware::FollowRedirects
-        b.adapter :net_http
-      }
-      conn.options.timeout = timeout
-      conn.options.timeout = timeout
-      conn.authorization :Basic, auth if auth
+    auth = geoserver_credentials
 
-      conn.head.headers['content-type']
-    rescue Faraday::Error::ConnectionFailed
-      return placeholder_data[:type]
-    rescue Faraday::Error::TimeoutError
-      return placeholder_data[:type]
-    rescue => error
-      # puts error.inspect
-      return placeholder_data[:type]
+    conn = Faraday.new(url: image_url) do |b|
+      b.use FaradayMiddleware::FollowRedirects
+      b.adapter :net_http
     end
+
+    conn.options.timeout = timeout
+    conn.options.timeout = timeout
+    conn.authorization :Basic, auth if auth
+
+    conn.head.headers['content-type']
+  rescue Faraday::Error::ConnectionFailed
+    return placeholder_data[:type]
+  rescue Faraday::Error::TimeoutError
+    return placeholder_data[:type]
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
