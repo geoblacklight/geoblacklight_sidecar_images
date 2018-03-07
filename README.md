@@ -1,6 +1,7 @@
 # GeoBlacklight Sidecar Images
 
 [![Build Status](https://travis-ci.org/ewlarson/geoblacklight_sidecar_images.svg?branch=master)](https://travis-ci.org/ewlarson/geoblacklight_sidecar_images)
+[![Maintainability](https://api.codeclimate.com/v1/badges/88c14165af5459963011/maintainability)](https://codeclimate.com/github/ewlarson/geoblacklight_sidecar_images/maintainability)
 
 Store local copies of remote imagery in GeoBlacklight.
 
@@ -36,6 +37,8 @@ rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648
 
 ## TODOs
 
-* Prioritize local thumbnail solr field
-* Forgo attaching placeholder imagery
-* Rails 5.2 branch / ActionStorage
+* 0.0.1 - Initial gem
+* 0.1.0 - Forgo attaching placeholder imagery
+* 0.2.0 - Prioritize local thumbnail solr field
+* 0.3.0 - Add Statesman (state machine library)
+* Future - Rails 5.2 branch / ActionStorage

@@ -12,6 +12,13 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
+group :development, :test do
+  # Peg simplecov to < 0.8 until this is resolved:
+  # https://github.com/colszowka/simplecov/issues/281
+  gem 'coveralls', require: false
+  gem 'rubocop', '0.53.0', require: false
+end
+
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
