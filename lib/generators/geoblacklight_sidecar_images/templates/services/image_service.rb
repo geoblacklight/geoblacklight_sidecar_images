@@ -111,6 +111,8 @@ class ImageService
     placeholder_data[:type]
   rescue Faraday::Error::TimeoutError
     placeholder_data[:type]
+  rescue Exception
+    placeholder_data[:type]
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
