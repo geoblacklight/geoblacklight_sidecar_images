@@ -18,10 +18,9 @@ Gem::Specification.new do |s|
   s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency 'aasm'
-  s.add_dependency 'carrierwave'
+  s.add_dependency 'carrierwave', '~> 1.2'
   s.add_dependency 'geoblacklight', '~> 1.7'
-  s.add_dependency 'mini_magick'
+  s.add_dependency 'mini_magick', '~> 4.8'
   s.add_dependency 'rails', '>= 4.2', '< 6'
 
   s.add_development_dependency 'byebug'
