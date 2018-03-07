@@ -11,7 +11,6 @@ This GeoBlacklight plugin helps capture remote images from geo web services and 
 
 ## Requirements
 
-* [Blacklight](https://github.com/projectblacklight/blacklight/)
 * [GeoBlacklight](https://github.com/geoblacklight/geoblacklight)
 * [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
@@ -43,7 +42,7 @@ rake geoblacklight_sidecar_images:images:precache_all
 
 #### Individual Thumbnail
 
-```
+```bash
 rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
 ```
 
