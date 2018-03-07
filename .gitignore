@@ -2,6 +2,7 @@
 log/*.log
 pkg/
 Gemfile.lock
+coverage
 .rvmrc
 jetty
 tmp
