@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.summary     = 'Store local copies of remote imagery in GeoBlacklight'
   s.license     = 'Apache 2.0'
 
-  s.files         = `git ls-files`.split('\n')
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
-  s.executables   = `git ls-files -- bin/*`.split('\n').map { |f| File.basename(f) }
+  s.files         = `git ls-files -z`.split(%Q{\x0})
+  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
+  s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.require_paths = ['lib']
 
   s.add_dependency 'aasm'
