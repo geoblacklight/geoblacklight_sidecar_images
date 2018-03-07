@@ -16,14 +16,33 @@ This GeoBlacklight plugin helps capture remote images from geo web services and 
 
 ## Installation
 
-Forthcoming
+### Existing GeoBlacklight Instance
 
-## Development
+Add the gem to your Gemfile.
+
+```ruby
+gem 'geoblacklight_sidecar_images'
+```
+
+Run the generator.
 
 ```bash
-bundle exec rake ci
-cd .internal_test_app/
-rake geoblacklight:server
+$ bin/rails generate geoblacklight_sidecar_images:install
+```
+
+Run the database migration.
+
+```bash
+$ bin/rails db:migrate
+```
+
+### New GeoBlacklight Instance
+
+Create a new GeoBlacklight instance with the GBLSI code
+
+```bash
+$ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight_sidecar_images/master/template.rb
+
 ```
 
 ### Ingest Test Documents
@@ -45,6 +64,16 @@ rake geoblacklight_sidecar_images:images:precache_all
 ```bash
 rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
 ```
+
+## Development
+
+```bash
+bundle exec rake ci
+cd .internal_test_app/
+rake geoblacklight:server
+```
+
+Now you'll have an instance of GBLSI running. Follow the rake tasks above to ingest some data and harvest thumbnails.
 
 ## TODOs
 
