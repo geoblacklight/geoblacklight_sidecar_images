@@ -108,9 +108,9 @@ class ImageService
 
     conn.head.headers['content-type']
   rescue Faraday::Error::ConnectionFailed
-    return placeholder_data[:type]
+    placeholder_data[:type]
   rescue Faraday::Error::TimeoutError
-    return placeholder_data[:type]
+    placeholder_data[:type]
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
@@ -123,9 +123,9 @@ class ImageService
 
     conn.get.body
   rescue Faraday::Error::ConnectionFailed
-    return placeholder_image
+    placeholder_image
   rescue Faraday::Error::TimeoutError
-    return placeholder_image
+    placeholder_image
   end
 
   # Returns the thumbnail url.

@@ -4,7 +4,7 @@ require 'rails/generators'
 
 module GeoblacklightSidecarImages
   class ExampleDocsGenerator < Rails::Generators::Base
-    source_root File.expand_path('../../../../spec/fixtures/', __FILE__)
+    source_root File.expand_path('../../../spec/fixtures', __dir__)
 
     desc <<-DESCRIPTION
       This generator makes the following changes to your application:
