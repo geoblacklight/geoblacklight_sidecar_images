@@ -1,4 +1,7 @@
 # GeoBlacklight Sidecar Images
+
+[![Build Status](https://travis-ci.org/ewlarson/geoblacklight_sidecar_images.svg?branch=master)](https://travis-ci.org/ewlarson/geoblacklight_sidecar_images)
+
 Store local copies of remote imagery in GeoBlacklight.
 
 ## Description
@@ -16,21 +19,23 @@ Forthcoming
 
 ## Development
 
-rake ci
+bundle exec rake ci
 cd .internal_test_app/
 rake geoblacklight:server
 
 ### Ingest Test Documents
-rake geoblacklight_sidecar_images:sample_data:ingest['/Users/ewlarson/Rails/geoblacklight_sidecar_images/spec/fixtures/files']
+rake geoblacklight_sidecar_images:sample_data:ingest['<FULL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
 
 ### Cache images
-rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
+
+#### All Thumbnails
 rake geoblacklight_sidecar_images:images:precache_all
+
+#### Individual Thumbnail
+rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
 
 ## TODOs
 
-* EngineCart / rake ci (complete)
-* Write specs / Use VCR for HTTP interactions / Spotlight examples?
-* Remove .png bias / Use U of MN IIIF server (jpeg)
-* Forgo attaching Placeholder imagery?
+* Prioritize local thumbnail solr field
+* Forgo attaching placeholder imagery
 * Rails 5.2 branch / ActionStorage
