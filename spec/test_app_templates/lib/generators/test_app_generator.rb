@@ -18,14 +18,12 @@ class TestAppGenerator < Rails::Generators::Base
 
   def run_blacklight_generator
     say_status('warning', 'GENERATING BL', :yellow)
-
     generate 'blacklight:install', '--devise'
   end
 
   def run_geoblacklight_generator
     say_status('warning', 'GENERATING GBL', :yellow)
-
-    generate 'geoblacklight:install', '--devise'
+    generate 'geoblacklight:install', '--force'
   end
 
   def run_geoblacklight_sidecar_images_generator

@@ -7,7 +7,7 @@ gem 'geoblacklight_sidecar_images'
 run 'bundle install'
 
 generate 'blacklight:install', '--devise'
-generate 'geoblacklight:install', '-f'
-generate 'geoblacklight_sidecar_images:install', '-f'
+generate 'geoblacklight:install', '--force'
+generate 'geoblacklight_sidecar_images:install', '--force'
 
 rake 'db:migrate'
