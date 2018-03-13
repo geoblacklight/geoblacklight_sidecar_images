@@ -16,12 +16,12 @@ describe ImageService do
     end
 
     it 'should prioritize settings thumbnail field' do
-      expect(thumb_imgsvc.send(:solr_thumbnail_field?)).to be_truthy
+      expect(thumb_imgsvc.send(:gblsi_thumbnail_field?)).to be_truthy
       expect(thumb_imgsvc.send(:image_url)).to eq 'https://umedia.lib.umn.edu/sites/default/files/imagecache/square300/reference/562/image/jpeg/1089695.jpg'
     end
 
     it 'should choose references if no settings thumbnail field value' do
-      expect(wms_imgsvc.send(:solr_thumbnail_field?)).to be_truthy
+      expect(wms_imgsvc.send(:gblsi_thumbnail_field?)).to be_truthy
       expect(wms_imgsvc.send(:image_url)).to include 'wms'
     end
   end

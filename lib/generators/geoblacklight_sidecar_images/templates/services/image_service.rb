@@ -68,8 +68,16 @@ class ImageService
   end
 
   # Tests if local thumbnail method is configured
-  def solr_thumbnail_field?
-    Settings.THUMBNAIL_FIELD
+  def gblsi_thumbnail_field?
+    Settings.GBLSI_THUMBNAIL_FIELD
+  end
+
+  def gblsi_thumbnail_uri
+    if gblsi_thumbnail_field? && @document[Settings.GBLSI_THUMBNAIL_FIELD]
+      @document[Settings.GBLSI_THUMBNAIL_FIELD]
+    else
+      false
+    end
   end
 
   def placeholder_base_path
@@ -145,8 +153,8 @@ class ImageService
   # dct references is used instead.
   def image_url
     @image_url ||= begin
-      if solr_thumbnail_field? && @document[Settings.THUMBNAIL_FIELD]
-        @document[Settings.THUMBNAIL_FIELD]
+      if gblsi_thumbnail_uri
+        gblsi_thumbnail_uri
       elsif restricted_scanned_map?
         image_reference
       elsif restricted_wms_layer? && !geoserver_credentials_valid?
