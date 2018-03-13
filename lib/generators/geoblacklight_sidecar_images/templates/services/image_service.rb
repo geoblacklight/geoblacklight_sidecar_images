@@ -67,6 +67,11 @@ class ImageService
     Settings.PROXY_GEOSERVER_AUTH != 'Basic base64encodedusername:password'
   end
 
+  # Tests if local thumbnail method is configured
+  def solr_thumbnail_field?
+    Settings.THUMBNAIL_FIELD
+  end
+
   def placeholder_base_path
     Rails.root.join('app', 'assets', 'images')
   end
@@ -140,7 +145,9 @@ class ImageService
   # dct references is used instead.
   def image_url
     @image_url ||= begin
-      if restricted_scanned_map?
+      if solr_thumbnail_field? && @document[Settings.THUMBNAIL_FIELD]
+        @document[Settings.THUMBNAIL_FIELD]
+      elsif restricted_scanned_map?
         image_reference
       elsif restricted_wms_layer? && !geoserver_credentials_valid?
         image_reference
