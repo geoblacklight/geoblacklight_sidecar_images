@@ -11,7 +11,8 @@ module GeoblacklightSidecarImages
 "INSTITUTION_LOCAL_NAME: 'Princeton'
 INSTITUTION_GEOSERVER_URL: 'https://geoserver.princeton.edu'
 PROXY_GEOSERVER_URL: 'http://localhost:3000'
-PROXY_GEOSERVER_AUTH: 'Basic base64encodedusername:password'"
+PROXY_GEOSERVER_AUTH: 'Basic base64encodedusername:password'
+GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       end
     end
 

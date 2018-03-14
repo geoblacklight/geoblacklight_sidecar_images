@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack/mime'
 
 class ImageService
@@ -65,6 +67,19 @@ class ImageService
     Settings.PROXY_GEOSERVER_AUTH != 'Basic base64encodedusername:password'
   end
 
+  # Tests if local thumbnail method is configured
+  def gblsi_thumbnail_field?
+    Settings.GBLSI_THUMBNAIL_FIELD
+  end
+
+  def gblsi_thumbnail_uri
+    if gblsi_thumbnail_field? && @document[Settings.GBLSI_THUMBNAIL_FIELD]
+      @document[Settings.GBLSI_THUMBNAIL_FIELD]
+    else
+      false
+    end
+  end
+
   def placeholder_base_path
     Rails.root.join('app', 'assets', 'images')
   end
@@ -111,6 +126,10 @@ class ImageService
     placeholder_data[:type]
   rescue Faraday::Error::TimeoutError
     placeholder_data[:type]
+
+  # Rescuing Exception intentionally
+  rescue Exception
+    placeholder_data[:type]
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
@@ -134,7 +153,9 @@ class ImageService
   # dct references is used instead.
   def image_url
     @image_url ||= begin
-      if restricted_scanned_map?
+      if gblsi_thumbnail_uri
+        gblsi_thumbnail_uri
+      elsif restricted_scanned_map?
         image_reference
       elsif restricted_wms_layer? && !geoserver_credentials_valid?
         image_reference

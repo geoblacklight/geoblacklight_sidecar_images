@@ -19,6 +19,14 @@ AllCops:
   - 'template.rb'
   - Gemfile
 
+Lint/RescueException:
+  Exclude:
+  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
+
+Metrics/BlockLength:
+  Exclude:
+  - 'spec/**/*'
+    
 Metrics/LineLength:
   Max: 100
   Exclude:

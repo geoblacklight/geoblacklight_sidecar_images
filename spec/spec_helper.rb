@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 def json_data(filename)
   file_content = file_fixture("#{filename}.json").read

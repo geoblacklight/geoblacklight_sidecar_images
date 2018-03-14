@@ -10,6 +10,9 @@ Store local copies of remote imagery in GeoBlacklight.
 ## Description
 This GeoBlacklight plugin helps capture remote images from geo web services and save them locally. It borrows the concept of a [SolrDocumentSidecar](https://github.com/projectblacklight/spotlight/blob/master/app/models/spotlight/solr_document_sidecar.rb) from [Spotlight](https://github.com/projectblacklight/spotlight), to have an ActiveRecord-based "sidecar" to match each non-AR SolrDocument. This allows us to use [carrierwave](https://github.com/carrierwaveuploader/carrierwave) to attach images to our documents.
 
+### Example Screenshot
+![Screenshot](screenshot.png)
+
 ## Requirements
 
 * [GeoBlacklight](https://github.com/geoblacklight/geoblacklight)
@@ -66,6 +69,25 @@ rake geoblacklight_sidecar_images:images:precache_all
 rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
 ```
 
+## Prioritize Solr Thumbnail Field URIs
+
+If you add a thumbnail uri to your geoblacklight solr documents...
+
+### Example Doc
+
+```json
+{
+  ...
+  "dc_format_s":"TIFF",
+  "dc_creator_sm":["Minnesota. Department of Highways."],
+  "thumbnail_path_ss":"https://umedia.lib.umn.edu/sites/default/files/imagecache/square300/reference/562/image/jpeg/1089695.jpg",
+  "dc_type_s":"Still image",
+  ...
+}
+```
+
+Then you can edit your GeoBlacklight settings.yml file to point at that solr field (Settings.GBLSI_THUMBNAIL_FIELD). Any docs in your index that have a value for that field will harvest the image at that URI instead of trying to retrieve an image via IIIF or the other web services.
+
 ## Development
 
 ```bash
@@ -78,8 +100,8 @@ Now you'll have an instance of GBLSI running. Follow the rake tasks above to ing
 
 ## TODOs
 
-* 0.0.1 - Initial gem
-* 0.1.0 - Forgo attaching placeholder imagery
-* 0.2.0 - Prioritize local thumbnail solr field
+* ~~0.0.1 - Initial gem~~
+* ~~0.1.0 - Prioritize local thumbnail solr field~~
+* 0.2.0 - Forgo attaching placeholder imagery
 * 0.3.0 - Add Statesman (state machine library)
-* Future - Rails 5.2 branch / ActionStorage
+* 1.0.0 - Rails 5.2 branch / Switch to ActionStorage
