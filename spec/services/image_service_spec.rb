@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe ImageService do
-  let(:iiif_document) { SolrDocument.new(json_data('umn_iiif_jpg')) }
+  let(:iiif_document) { SolrDocument.new(json_data('umich_iiif_jpg')) }
   let(:iiif_imgsvc) { ImageService.new(iiif_document) }
   let(:wms_document) { SolrDocument.new(json_data('public_polygon_mit')) }
   let(:wms_imgsvc) { ImageService.new(wms_document) }
