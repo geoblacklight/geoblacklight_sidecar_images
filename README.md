@@ -100,8 +100,8 @@ Now you'll have an instance of GBLSI running. Follow the rake tasks above to ing
 
 ## TODOs
 
-* 0.0.1 - Initial gem
-* 0.1.0 - Prioritize local thumbnail solr field
+* ~~0.0.1 - Initial gem~~
+* ~~0.1.0 - Prioritize local thumbnail solr field~~
 * 0.2.0 - Forgo attaching placeholder imagery
 * 0.3.0 - Add Statesman (state machine library)
-* Future - Rails 5.2 branch / ActionStorage
+* 1.0.0 - Rails 5.2 branch / Switch to ActionStorage
