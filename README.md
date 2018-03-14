@@ -10,7 +10,7 @@ Store local copies of remote imagery in GeoBlacklight.
 ## Description
 This GeoBlacklight plugin helps capture remote images from geo web services and save them locally. It borrows the concept of a [SolrDocumentSidecar](https://github.com/projectblacklight/spotlight/blob/master/app/models/spotlight/solr_document_sidecar.rb) from [Spotlight](https://github.com/projectblacklight/spotlight), to have an ActiveRecord-based "sidecar" to match each non-AR SolrDocument. This allows us to use [carrierwave](https://github.com/carrierwaveuploader/carrierwave) to attach images to our documents.
 
-![Screenshot](https://raw.githubusercontent.com/ewlarson/geoblacklight_sidecar_images/master/screenshot.png)
+![Screenshot](screenshot.png)
 
 ## Requirements
 
