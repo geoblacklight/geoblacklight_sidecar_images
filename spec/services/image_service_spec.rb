@@ -10,6 +10,8 @@ describe ImageService do
   let(:thumb_document) { SolrDocument.new(json_data('umn_solr_thumb')) }
   let(:thumb_imgsvc) { ImageService.new(thumb_document) }
 
+  # @TODO: bdcbcd3e-f6db-4ee4-b7b7-d75fe35f1d92 - Michigan State - thumbnail_path_ss
+
   describe '#store' do
     it 'should respond to store' do
       expect(iiif_imgsvc).to respond_to(:store)
