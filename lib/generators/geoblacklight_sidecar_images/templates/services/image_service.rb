@@ -14,15 +14,14 @@ class ImageService
     )
   end
 
-  # Stores the document's image in SolrDocumentSidecar
-  # using Carrierwave
+  # Stores the document's image in ActiveStorage
   # @return [Boolean]
   #
   # @TODO: EWL
   def store
     sidecar = @document.sidecar
-    sidecar.image = image_tempfile(@document.id)
-    sidecar.save!
+    # sidecar.image = image_tempfile(@document.id)
+    # sidecar.save!
     @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
     @logger.tagged(@document.id, 'SIDECAR_IMAGE_URL') { @logger.info @document.sidecar.image_url }
   rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid

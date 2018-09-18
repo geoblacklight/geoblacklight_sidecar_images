@@ -16,12 +16,6 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       end
     end
 
-    def add_carrierwave_require
-      inject_into_file 'config/application.rb', after: "require 'rails/all'" do
-        "\n  require 'carrierwave'"
-      end
-    end
-
     def generate_geoblacklight_assets
       generate 'geoblacklight_sidecar_images:assets'
     end
@@ -42,12 +36,12 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       generate 'geoblacklight_sidecar_images:services'
     end
 
-    def generate_geoblacklight_uploaders
-      generate 'geoblacklight_sidecar_images:uploaders'
-    end
-
     def generate_geoblacklight_views
       generate 'geoblacklight_sidecar_images:views'
+    end
+
+    def generate_action_storage
+      rake 'active_storage:install'
     end
 
     def bundle_install

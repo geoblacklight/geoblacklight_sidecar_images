@@ -3,9 +3,9 @@
 ##
 # Metadata for indexed documents
 class SolrDocumentSidecar < ApplicationRecord
-  mount_uploader :image, ImageUploader
-
   belongs_to :document, required: true, polymorphic: true
+
+  has_one_attached :image
 
   # Roll our own polymorphism because our documents are not AREL-able
   def document
