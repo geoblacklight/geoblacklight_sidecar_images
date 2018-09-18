@@ -1,4 +1,4 @@
-class CreateSolrDocumentSidecars < ActiveRecord::Migration[5.1]
+class CreateSolrDocumentSidecars < ActiveRecord::Migration[5.2]
   def change
     create_table :solr_document_sidecars do |t|
       t.string "document_id"
