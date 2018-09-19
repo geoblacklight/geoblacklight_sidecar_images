@@ -1,6 +1,6 @@
-class CreateSolrDocumentSidecarImageTransitions < ActiveRecord::Migration[5.2]
+class CreateSidecarImageTransitions < ActiveRecord::Migration[5.2]
   def change
-    create_table :solr_document_sidecar_image_transitions do |t|
+    create_table :sidecar_image_transitions do |t|
       t.string :to_state, null: false
       t.text :metadata
       t.integer :sort_key, null: false
@@ -14,9 +14,9 @@ class CreateSolrDocumentSidecarImageTransitions < ActiveRecord::Migration[5.2]
     end
 
     # Foreign keys are optional, but highly recommended
-    add_foreign_key :solr_document_sidecar_image_transitions, :solr_document_sidecars
+    add_foreign_key :sidecar_image_transitions, :solr_document_sidecars
 
-    add_index(:solr_document_sidecar_image_transitions,
+    add_index(:sidecar_image_transitions,
               [:solr_document_sidecar_id, :sort_key],
               unique: true,
               name: "index_sidecar_image_transitions_parent_sort")
