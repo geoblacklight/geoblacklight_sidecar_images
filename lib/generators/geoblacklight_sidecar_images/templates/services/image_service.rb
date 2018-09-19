@@ -20,11 +20,15 @@ class ImageService
   # @TODO: EWL
   def store
     sidecar = @document.sidecar
-    # sidecar.image = image_tempfile(@document.id)
-    # sidecar.save!
+    sidecar.image.attach(
+      io: image_tempfile(@document.id),
+      filename: "#{@document.id}#{image_extension}",
+      content_type: remote_content_type
+    )
+
     @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
-    @logger.tagged(@document.id, 'SIDECAR_IMAGE_URL') { @logger.info @document.sidecar.image_url }
-  rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
+    @logger.tagged(@document.id, 'SIDECAR_IMAGE') { @logger.info @document.sidecar.image.inspect }
+  rescue Exception => invalid
     @logger.tagged(@document.id, 'STATUS') { @logger.info 'FAILURE' }
     @logger.tagged(@document.id, 'EXCEPTION') { @logger.info invalid.inspect }
   end
@@ -45,14 +49,14 @@ class ImageService
     @logger.tagged(@document.id, 'service_url') { @logger.info service_url }
     @logger.tagged(@document.id, 'image_extension') { @logger.info image_extension }
 
-    file = Tempfile.new([document_id, image_extension])
-    file.binmode
-    file.write(image_data[:data])
-    file.close
+    temp_file = Tempfile.new([document_id, image_extension])
+    temp_file.binmode
+    temp_file.write(image_data[:data])
+    temp_file.rewind
 
-    @logger.tagged(@document.id, 'IMAGE_TEMPFILE') { @logger.info file.inspect }
+    @logger.tagged(@document.id, 'IMAGE_TEMPFILE') { @logger.info temp_file.inspect }
 
-    file
+    temp_file
   end
 
   # Returns geoserver auth credentials if the document is a restriced Local WMS layer.
