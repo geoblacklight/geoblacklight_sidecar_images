@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'geoblacklight', '~> 1.9'
   s.add_dependency 'mini_magick', '~> 4.8'
+  s.add_dependency 'image_processing', '~> 1.6'
   s.add_dependency 'statesman', '~> 3.4'
   s.add_dependency 'rails', '>= 5.2', '< 6'
 

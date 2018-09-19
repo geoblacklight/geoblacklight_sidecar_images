@@ -39,6 +39,7 @@ else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
   gem 'geoblacklight', '~> 1.9'
   gem 'mini_magick'
+  gem 'image_processing', '~> 1.6'
   gem 'statesman', '~> 3.4'
   gem 'rails', '~> 5.2.0', '< 6'
 end
