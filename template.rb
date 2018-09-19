@@ -2,6 +2,7 @@
 
 gem 'blacklight', '>= 6.3'
 gem 'geoblacklight', '>= 1.4'
+gem 'statesman', '>= 3.4'
 gem 'geoblacklight_sidecar_images', :git => "git://github.com/ewlarson/geoblacklight_sidecar_images.git", :branch => "feature/rails-5.2"
 
 run 'bundle install'
