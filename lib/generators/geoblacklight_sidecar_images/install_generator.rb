@@ -44,9 +44,9 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       rake 'active_storage:install'
     end
 
-    def generate_geoblacklight_config
-      generate 'geoblacklight_sidecar_images:config'
-    end
+    #def generate_geoblacklight_config
+    #  generate 'geoblacklight_sidecar_images:config'
+    #end
 
     def bundle_install
       Bundler.with_clean_env do
