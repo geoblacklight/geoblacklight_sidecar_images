@@ -20,7 +20,7 @@ class CreateSidecarImageTransitions < ActiveRecord::Migration[5.2]
               [:solr_document_sidecar_id, :sort_key],
               unique: true,
               name: "index_sidecar_image_transitions_parent_sort")
-    add_index(:solr_document_sidecar_image_transitions,
+    add_index(:sidecar_image_transitions,
               [:solr_document_sidecar_id, :most_recent],
               unique: true,
 
