@@ -11,7 +11,13 @@
     <div class='col-xs-12'>
       <div class='media'>
         <div class='media-left'>
-          <img class='media-object' src="<%=document.sidecar.image_url(:square)%>"/>
+          <% if document.sidecar.image.attached? %>
+            <% if document.sidecar.image.variable? %>
+              <%= image_tag document.sidecar.image.variant(resize: "100x100"), {class: 'media-object'} %>
+            <% else %>
+              <%= image_tag document.sidecar.image, {class: 'media-object'} %>
+            <% end %>
+          <% end %>
         </div>
         <div class='media-body'>
           <small>
