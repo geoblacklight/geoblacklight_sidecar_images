@@ -1,4 +1,4 @@
-class SolrDocumentSidecarImageStateMachine
+class SidecarImageStateMachine
   include Statesman::Machine
 
   state :initialized, initial: true

@@ -41,24 +41,17 @@ module GeoblacklightSidecarImages
       )
     end
 
-    def create_solr_document_sidecar_image
+    def create_sidecar_image_transition
       copy_file(
-        'models/solr_document_sidecar_image.rb',
-        'app/models/solr_document_sidecar_image.rb'
+        'models/sidecar_image_transition.rb',
+        'app/models/sidecar_image_transition.rb'
       )
     end
 
-    def create_solr_document_sidecar_image_transition
+    def create_sidecar_image_state_machine
       copy_file(
-        'models/solr_document_sidecar_image_transition.rb',
-        'app/models/solr_document_sidecar_image_transition.rb'
-      )
-    end
-
-    def create_solr_document_sidecar_image_state_machine
-      copy_file(
-        'models/solr_document_sidecar_image_state_machine.rb',
-        'app/models/solr_document_sidecar_image_state_machine.rb'
+        'models/sidecar_image_state_machine.rb',
+        'app/models/sidecar_image_state_machine.rb'
       )
     end
 

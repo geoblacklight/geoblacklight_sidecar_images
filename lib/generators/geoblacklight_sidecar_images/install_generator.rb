@@ -20,6 +20,10 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       generate 'geoblacklight_sidecar_images:assets'
     end
 
+    def generate_geoblacklight_config
+      generate 'geoblacklight_sidecar_images:config'
+    end
+
     def generate_geoblacklight_example_docs
       generate 'geoblacklight_sidecar_images:example_docs'
     end

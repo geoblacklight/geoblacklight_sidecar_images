@@ -52,6 +52,11 @@ $ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight
 ### Ingest Test Documents
 
 ```bash
+  # Run your GBL instance
+  rake geoblacklight:server
+```
+
+```bash
 rake geoblacklight_sidecar_images:sample_data:ingest['<FULL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
 ```
 
