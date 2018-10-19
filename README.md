@@ -57,7 +57,7 @@ $ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight
 ```
 
 ```bash
-rake geoblacklight_sidecar_images:sample_data:ingest['<FULL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+rake gblsci:sample_data:ingest['<FULL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
 ```
 
 ### Cache images
@@ -65,13 +65,13 @@ rake geoblacklight_sidecar_images:sample_data:ingest['<FULL_PATH_TO>/geoblacklig
 #### All Thumbnails
 
 ```bash
-rake geoblacklight_sidecar_images:images:precache_all
+rake gblsci:images:precache_all
 ```
 
 #### Individual Thumbnail
 
 ```bash
-rake geoblacklight_sidecar_images:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
+rake gblsci:images:precache_id['minnesota-iiif-jpg-83f4648a-125c-4000-a12f-aba2b432e7cd']
 ```
 
 ## Prioritize Solr Thumbnail Field URIs

@@ -1,4 +1,4 @@
-namespace :geoblacklight_sidecar_images do
+namespace :gblsci do
   namespace :sample_data do
     desc 'Ingests a directory of geoblacklight.json files'
     task :ingest, [:directory] => :environment do |_t, args|
