@@ -33,5 +33,9 @@ class SolrDocumentSidecar < ApplicationRecord
     :initialized
   end
 
+  def self.image_url
+    Rails.application.routes.url_helpers.rails_blob_path(self.image, only_path: true)
+  end
+
   private_class_method :initial_state
 end

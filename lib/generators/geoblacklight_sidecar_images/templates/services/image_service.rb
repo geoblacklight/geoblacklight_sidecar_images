@@ -1,10 +1,17 @@
 # frozen_string_literal: true
-
+require "addressable/uri"
 require 'rack/mime'
 
 class ImageService
   def initialize(document)
     @document = document
+
+    @metadata = Hash.new
+    @metadata['solr_doc_id'] = document.id
+    @metadata['solr_version'] = @document.sidecar.version
+
+    @document.sidecar.state_machine.transition_to!(:processing, @metadata)
+
     @logger ||= ActiveSupport::TaggedLogging.new(
       Logger.new(
         File.join(
@@ -19,6 +26,9 @@ class ImageService
   #
   # @TODO: EWL
   def store
+    # Gentle hands.
+    sleep(1)
+
     sidecar = @document.sidecar
     sidecar.image.attach(
       io: image_tempfile(@document.id),
@@ -26,11 +36,19 @@ class ImageService
       content_type: remote_content_type
     )
 
-    @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
-    @logger.tagged(@document.id, 'SIDECAR_IMAGE') { @logger.info @document.sidecar.image.inspect }
+    if @metadata['placeheld'] == false
+      @document.sidecar.state_machine.transition_to!(:succeeded, @metadata)
+    else
+      @document.sidecar.state_machine.transition_to!(:placeheld, @metadata)
+    end
+
+    log_output
+
   rescue Exception => invalid
-    @logger.tagged(@document.id, 'STATUS') { @logger.info 'FAILURE' }
-    @logger.tagged(@document.id, 'EXCEPTION') { @logger.info invalid.inspect }
+    @metadata['exception'] = invalid.inspect
+    @document.sidecar.state_machine.transition_to!(:failed, @metadata)
+
+    log_output
   end
 
   # Returns hash containing placeholder thumbnail for the document.
@@ -44,18 +62,20 @@ class ImageService
   private
 
   def image_tempfile(document_id)
-    @logger.tagged(@document.id, 'remote_content_type') { @logger.info remote_content_type }
-    @logger.tagged(@document.id, 'viewer_protocol') { @logger.info @document.viewer_protocol }
-    @logger.tagged(@document.id, 'service_url') { @logger.info service_url }
-    @logger.tagged(@document.id, 'image_extension') { @logger.info image_extension }
+    @metadata['remote_content_type']  = remote_content_type
+    @metadata['viewer_protocol']      = viewer_protocol
+    @metadata['image_url']            = image_url
+    @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
+    @metadata['service_url']          = service_url
+    @metadata['image_extension']      = image_extension
+    @metadata['placeheld']            = false
 
     temp_file = Tempfile.new([document_id, image_extension])
     temp_file.binmode
     temp_file.write(image_data[:data])
     temp_file.rewind
 
-    @logger.tagged(@document.id, 'IMAGE_TEMPFILE') { @logger.info temp_file.inspect }
-
+    @metadata['image_tempfile'] = temp_file.inspect
     temp_file
   end
 
@@ -115,38 +135,53 @@ class ImageService
   def remote_content_type
     auth = geoserver_credentials
 
-    conn = Faraday.new(url: image_url) do |b|
+    uri = Addressable::URI.parse(image_url)
+
+    conn = Faraday.new(url: uri.normalize.to_s) do |b|
       b.use FaradayMiddleware::FollowRedirects
       b.adapter :net_http
     end
 
     conn.options.timeout = timeout
-    conn.options.timeout = timeout
     conn.authorization :Basic, auth if auth
 
     conn.head.headers['content-type']
   rescue Faraday::Error::ConnectionFailed
+    @metadata['placeheld'] = true
     placeholder_data[:type]
   rescue Faraday::Error::TimeoutError
+    @metadata['placeheld'] = true
     placeholder_data[:type]
 
   # Rescuing Exception intentionally
   rescue Exception
+    @metadata['placeheld'] = true
     placeholder_data[:type]
   end
 
   # Gets thumbnail image from URL. On error, returns document's placeholder image.
   def remote_image
     auth = geoserver_credentials
-    conn = Faraday.new(url: image_url)
-    conn.options.timeout = timeout
-    conn.options.timeout = timeout
-    conn.authorization :Basic, auth if auth
 
-    conn.get.body
+    uri = Addressable::URI.parse(image_url)
+
+    if uri.scheme.include?("http")
+      conn = Faraday.new(url: uri.normalize.to_s) do |b|
+        b.use FaradayMiddleware::FollowRedirects
+        b.adapter :net_http
+      end
+
+      conn.options.timeout = timeout
+      conn.authorization :Basic, auth if auth
+      conn.get.body
+    else
+      return nil
+    end
   rescue Faraday::Error::ConnectionFailed
+    @metadata['placeheld'] = true
     placeholder_image
   rescue Faraday::Error::TimeoutError
+    @metadata['placeheld'] = true
     placeholder_image
   end
 
@@ -192,11 +227,19 @@ class ImageService
     @service_url ||= begin
       return unless @document.available?
       protocol = @document.viewer_protocol
-      return if protocol == 'map' || protocol.nil?
+      if protocol == 'map' || protocol.nil?
+        @metadata['placeheld'] = true
+        return
+      end
       "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
     rescue NameError
+      @metadata['placeheld'] = true
       return nil
     end
+  end
+
+  def viewer_protocol
+    @document.viewer_protocol
   end
 
   # Retreives a url to a static thumbnail from the document's dct_references field, if it exists.
@@ -213,5 +256,13 @@ class ImageService
   # Faraday timeout value.
   def timeout
     30
+  end
+
+  # Capture metadata within image harvest log
+  def log_output
+    @metadata["state"] = @document.sidecar.state_machine.current_state
+    @metadata.each do |key,value|
+      @logger.tagged(@document.id, key.to_s) { @logger.info value }
+    end
   end
 end
