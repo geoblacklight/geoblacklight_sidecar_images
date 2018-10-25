@@ -30,7 +30,7 @@ namespace :gblsci do
       doc_counter = 0
       results.docs.each do |document|
         begin
-          StoreImageJob.perform_later(document.to_h)
+          StoreImageJob.perform_later(document.id)
         rescue Blacklight::Exceptions::RecordNotFound
           next
         end
@@ -51,7 +51,7 @@ namespace :gblsci do
         results.docs.each do |document|
           sleep(1)
           begin
-            StoreImageJob.perform_later(document.to_h)
+            StoreImageJob.perform_later(document.id)
           rescue Blacklight::Exceptions::RecordNotFound
             next
           end
@@ -102,7 +102,7 @@ namespace :gblsci do
           cat = CatalogController.new
           begin
             resp, doc = cat.fetch(sc.document_id)
-            StoreImageJob.perform_later(doc.to_h)
+            StoreImageJob.perform_later(doc.id)
           rescue
             puts "orphaned / #{sc.document_id}"
           end

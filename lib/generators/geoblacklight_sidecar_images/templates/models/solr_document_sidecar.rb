@@ -9,7 +9,9 @@ class SolrDocumentSidecar < ApplicationRecord
   has_many :sidecar_image_transitions, autosave: false
   has_one_attached :image
 
-  # Roll our own polymorphism because our documents are not AREL-able
+  # If the sidecar solr document is updated, re-fetch thumbnail image
+  after_update :reimage, if: :saved_change_to_version?
+
   def document
     document_type.new document_type.unique_key => document_id
   end
@@ -18,7 +20,7 @@ class SolrDocumentSidecar < ApplicationRecord
     (super.constantize if defined?(super)) || default_document_type
   end
 
-  def state_machine
+  def image_state
     @state_machine ||= SidecarImageStateMachine.new(
       self,
       transition_class: SidecarImageTransition
@@ -38,4 +40,11 @@ class SolrDocumentSidecar < ApplicationRecord
   end
 
   private_class_method :initial_state
+
+  private
+
+  def reimage
+    self.image.purge if self.image.attached?
+    StoreImageJob.perform_later(self.document.id)
+  end
 end
