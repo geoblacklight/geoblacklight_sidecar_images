@@ -17,6 +17,10 @@
             <% else %>
               <%= image_tag document.sidecar.image, {class: 'media-object'} %>
             <% end %>
+          <% else %>
+            <span title="<%=document[Settings.FIELDS.GEOM_TYPE]%>">
+              <%= geoblacklight_icon(document[Settings.FIELDS.GEOM_TYPE]) %>
+            </span>
           <% end %>
         </div>
         <div class='media-body'>

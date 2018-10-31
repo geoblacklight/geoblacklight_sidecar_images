@@ -35,7 +35,7 @@ class ImageService
     sidecar = @document.sidecar
     io_file = image_tempfile(@document.id)
 
-    if @metadata['placeheld'] == false
+    if attachable?
       sidecar.image.attach(
         io: io_file,
         filename: "#{@document.id}#{image_extension}",
@@ -53,6 +53,18 @@ class ImageService
     @document.sidecar.image_state.transition_to!(:failed, @metadata)
 
     log_output
+  end
+
+  def attachable?
+    if remote_content_type.include?("text")
+      @metadata['attachable?'] = "false; remote_content_type is text"
+      return false
+    elsif @metadata['placeheld'] == true
+      @metadata['attachable?'] = "false; placeheld"
+      return false
+    else
+      return true
+    end
   end
 
   private
