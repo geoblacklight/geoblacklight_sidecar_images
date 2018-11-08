@@ -64,7 +64,7 @@ $ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight
 ```
 
 ```bash
-rake gblsci:sample_data:ingest['<FULL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
 ```
 
 ## Rake tasks
@@ -200,12 +200,26 @@ You'll definitely want to update this file to fit your own design's needs.
 ## Development
 
 ```bash
+
+# Run test suite
 bundle exec rake ci
+
+# Launch test app server
 cd .internal_test_app/
 rake geoblacklight:server
+
+# Load test fixtures
+bundle exec rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+
+# Run harvest
+bundle exec rake gblsci:images:harvest_all
+
+# Tail log
+tail -f log/image_service_development.log
+
 ```
 
-Now you'll have an instance of GBLSI running. Follow the rake tasks above to ingest some data and harvest thumbnails.
+[See Results](http://localhost:3000/?per_page=50&q=&search_field=all_fields)
 
 ## TODOs
 
