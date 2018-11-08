@@ -203,7 +203,7 @@ class ImageService
 
   # Default image size.
   def image_size
-    300
+    1500
   end
 
   # Faraday timeout value.
