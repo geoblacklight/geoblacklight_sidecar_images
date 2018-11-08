@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require "addressable/uri"
-require 'rack/mime'
+require "mimemagic"
 
 class ImageService
   attr_reader :document
@@ -12,6 +12,7 @@ class ImageService
     @metadata = Hash.new
     @metadata['solr_doc_id'] = document.id
     @metadata['solr_version'] = @document.sidecar.version
+    @metadata['placeheld'] = false
 
     @document.sidecar.image_state.transition_to!(:processing, @metadata)
 
@@ -27,27 +28,37 @@ class ImageService
   # Stores the document's image in ActiveStorage
   # @return [Boolean]
   #
-  # @TODO: EWL
   def store
-    # Gentle hands.
+    # Gentle hands
     sleep(1)
 
-    sidecar = @document.sidecar
     io_file = image_tempfile(@document.id)
 
-    if attachable?
-      sidecar.image.attach(
-        io: io_file,
-        filename: "#{@document.id}#{image_extension}",
-        content_type: remote_content_type
-      )
-      @document.sidecar.image_state.transition_to!(:succeeded, @metadata)
-    else
+    if io_file.nil? || @metadata['placeheld'] == true
       @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
+      log_output
+    else
+      # Remote content-type headers are untrustworthy
+      # Pull the mimetype and file extension via MimeMagic
+      mm = MimeMagic.by_magic(File.open(io_file))
+
+      @metadata['MimeMagic_type'] = mm.type
+      @metadata['MimeMagic_mediatype'] = mm.mediatype
+      @metadata['MimeMagic_subtype'] = mm.subtype
+
+      if mm.mediatype == "image"
+        @document.sidecar.image.attach(
+          io: io_file,
+          filename: "#{@document.id}.#{mm.subtype}",
+          content_type: mm.type
+        )
+        @document.sidecar.image_state.transition_to!(:succeeded, @metadata)
+      else
+        @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
+      end
+
+      log_output
     end
-
-    log_output
-
   rescue Exception => invalid
     @metadata['exception'] = invalid.inspect
     @document.sidecar.image_state.transition_to!(:failed, @metadata)
@@ -55,36 +66,25 @@ class ImageService
     log_output
   end
 
-  def attachable?
-    if remote_content_type.include?("text")
-      @metadata['attachable?'] = "false; remote_content_type is text"
-      return false
-    elsif @metadata['placeheld'] == true
-      @metadata['attachable?'] = "false; placeheld"
-      return false
-    else
-      return true
-    end
-  end
-
   private
 
   def image_tempfile(document_id)
-    @metadata['remote_content_type']  = remote_content_type
     @metadata['viewer_protocol']      = @document.viewer_protocol
     @metadata['image_url']            = image_url
-    @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
     @metadata['service_url']          = service_url
-    @metadata['image_extension']      = image_extension
-    @metadata['placeheld']            = false
+    @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
 
-    temp_file = Tempfile.new([document_id, image_extension])
-    temp_file.binmode
-    temp_file.write(image_data)
-    temp_file.rewind
+    if image_data && @metadata['placeheld'] == false
+      temp_file = Tempfile.new([document_id, ".tmp"])
+      temp_file.binmode
+      temp_file.write(image_data)
+      temp_file.rewind
 
-    @metadata['image_tempfile'] = temp_file.inspect
-    temp_file
+      @metadata['image_tempfile'] = temp_file.inspect
+      temp_file
+    else
+      return nil
+    end
   end
 
   # Returns geoserver auth credentials if the document is a restriced Local WMS layer.
@@ -117,32 +117,6 @@ class ImageService
     remote_image
   end
 
-  # Gets remote content type from URL. On error, placehold the image.
-  def remote_content_type
-    auth = geoserver_credentials
-
-    uri = Addressable::URI.parse(image_url)
-
-    conn = Faraday.new(url: uri.normalize.to_s) do |b|
-      b.use FaradayMiddleware::FollowRedirects
-      b.adapter :net_http
-    end
-
-    conn.options.timeout = timeout
-    conn.authorization :Basic, auth if auth
-
-    conn.head.headers['content-type']
-  rescue Faraday::Error::ConnectionFailed
-    @metadata['error'] = "Faraday::Error::ConnectionFailed"
-    @metadata['placeheld'] = true
-  rescue Faraday::Error::TimeoutError
-    @metadata['error'] = "Faraday::Error::TimeoutError"
-    @metadata['placeheld'] = true
-  rescue Exception => e
-    @metadata['error'] = e.inspect
-    @metadata['placeheld'] = true
-  end
-
   # Gets thumbnail image from URL. On error, placehold image.
   def remote_image
     auth = geoserver_credentials
@@ -164,9 +138,11 @@ class ImageService
   rescue Faraday::Error::ConnectionFailed
     @metadata['error'] = "Faraday::Error::ConnectionFailed"
     @metadata['placeheld'] = true
+    return nil
   rescue Faraday::Error::TimeoutError
     @metadata['error'] = "Faraday::Error::TimeoutError"
     @metadata['placeheld'] = true
+    return nil
   end
 
   # Returns the thumbnail url.
@@ -185,12 +161,6 @@ class ImageService
         service_url || image_reference
       end
     end
-  end
-
-  # Determines the image file extension
-  # Necessary for writing a tempfile
-  def image_extension
-    @image_extension ||= Rack::Mime::MIME_TYPES.rassoc(remote_content_type).try(:first) || '.png'
   end
 
   # Checks if the document is Local restriced access and is a scanned map.
@@ -215,7 +185,7 @@ class ImageService
       if protocol == 'map' || protocol.nil?
         @metadata['error'] = "Unsupported viewer protocol"
         @metadata['placeheld'] = true
-        return
+        return nil
       end
       "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
     rescue NameError
@@ -231,7 +201,7 @@ class ImageService
     JSON.parse(@document[@document.references.reference_field])['http://schema.org/thumbnailUrl']
   end
 
-  # Default thumbnail size.
+  # Default image size.
   def image_size
     300
   end
