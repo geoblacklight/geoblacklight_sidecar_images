@@ -24,10 +24,18 @@ module GeoblacklightSidecarImages
     def include_sidecar_solrdocument
       sidecar = <<-"SIDECAR"
         def sidecar
-          SolrDocumentSidecar.find_or_create_by!(
+          # Find or create, and set version
+          sidecar = SolrDocumentSidecar.where(
             document_id: id,
             document_type: self.class.to_s
-          )
+          ).first_or_create do |sc|
+            sc.version = self._source["_version_"]
+          end
+
+          sidecar.version = self._source["_version_"]
+          sidecar.save
+
+          sidecar
         end
       SIDECAR
 
@@ -38,6 +46,20 @@ module GeoblacklightSidecarImages
       copy_file(
         'models/solr_document_sidecar.rb',
         'app/models/solr_document_sidecar.rb'
+      )
+    end
+
+    def create_sidecar_image_transition
+      copy_file(
+        'models/sidecar_image_transition.rb',
+        'app/models/sidecar_image_transition.rb'
+      )
+    end
+
+    def create_sidecar_image_state_machine
+      copy_file(
+        'models/sidecar_image_state_machine.rb',
+        'app/models/sidecar_image_state_machine.rb'
       )
     end
 

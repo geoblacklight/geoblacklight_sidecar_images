@@ -37,11 +37,11 @@ if File.exist?(file)
   end
 else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
-
-  gem 'aasm'
-  gem 'carrierwave'
-  gem 'geoblacklight', '~> 1.7'
+  gem 'geoblacklight', '~> 1.9'
   gem 'mini_magick'
-  gem 'rails', '>= 4.2', '< 6'
+  gem 'image_processing', '~> 1.6'
+  gem 'mimemagic', '~> 0.3'
+  gem 'statesman', '~> 3.4'
+  gem 'rails', '~> 5.2.0', '< 6'
 end
 # END ENGINE_CART BLOCK

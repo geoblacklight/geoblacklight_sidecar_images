@@ -1,10 +1,21 @@
 # frozen_string_literal: true
-
-require 'rack/mime'
+require "addressable/uri"
+require "mimemagic"
 
 class ImageService
+  attr_reader :document
+  attr_writer :metadata, :logger
+
   def initialize(document)
     @document = document
+
+    @metadata = Hash.new
+    @metadata['solr_doc_id'] = document.id
+    @metadata['solr_version'] = @document.sidecar.version
+    @metadata['placeheld'] = false
+
+    @document.sidecar.image_state.transition_to!(:processing, @metadata)
+
     @logger ||= ActiveSupport::TaggedLogging.new(
       Logger.new(
         File.join(
@@ -14,46 +25,66 @@ class ImageService
     )
   end
 
-  # Stores the document's image in SolrDocumentSidecar
-  # using Carrierwave
+  # Stores the document's image in ActiveStorage
   # @return [Boolean]
   #
-  # @TODO: EWL
   def store
-    sidecar = @document.sidecar
-    sidecar.image = image_tempfile(@document.id)
-    sidecar.save!
-    @logger.tagged(@document.id, 'STATUS') { @logger.info 'SUCCESS' }
-    @logger.tagged(@document.id, 'SIDECAR_IMAGE_URL') { @logger.info @document.sidecar.image_url }
-  rescue ActiveRecord::RecordInvalid, FloatDomainError => invalid
-    @logger.tagged(@document.id, 'STATUS') { @logger.info 'FAILURE' }
-    @logger.tagged(@document.id, 'EXCEPTION') { @logger.info invalid.inspect }
-  end
+    # Gentle hands
+    sleep(1)
 
-  # Returns hash containing placeholder thumbnail for the document.
-  # @return [Hash]
-  #   * :type [String] image mime type
-  #   * :data [String] image file data
-  def placeholder
-    placeholder_data
+    io_file = image_tempfile(@document.id)
+
+    if io_file.nil? || @metadata['placeheld'] == true
+      @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
+      log_output
+    else
+      # Remote content-type headers are untrustworthy
+      # Pull the mimetype and file extension via MimeMagic
+      mm = MimeMagic.by_magic(File.open(io_file))
+
+      @metadata['MimeMagic_type'] = mm.type
+      @metadata['MimeMagic_mediatype'] = mm.mediatype
+      @metadata['MimeMagic_subtype'] = mm.subtype
+
+      if mm.mediatype == "image"
+        @document.sidecar.image.attach(
+          io: io_file,
+          filename: "#{@document.id}.#{mm.subtype}",
+          content_type: mm.type
+        )
+        @document.sidecar.image_state.transition_to!(:succeeded, @metadata)
+      else
+        @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
+      end
+
+      log_output
+    end
+  rescue Exception => invalid
+    @metadata['exception'] = invalid.inspect
+    @document.sidecar.image_state.transition_to!(:failed, @metadata)
+
+    log_output
   end
 
   private
 
   def image_tempfile(document_id)
-    @logger.tagged(@document.id, 'remote_content_type') { @logger.info remote_content_type }
-    @logger.tagged(@document.id, 'viewer_protocol') { @logger.info @document.viewer_protocol }
-    @logger.tagged(@document.id, 'service_url') { @logger.info service_url }
-    @logger.tagged(@document.id, 'image_extension') { @logger.info image_extension }
+    @metadata['viewer_protocol']      = @document.viewer_protocol
+    @metadata['image_url']            = image_url
+    @metadata['service_url']          = service_url
+    @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
 
-    file = Tempfile.new([document_id, image_extension])
-    file.binmode
-    file.write(image_data[:data])
-    file.close
+    if image_data && @metadata['placeheld'] == false
+      temp_file = Tempfile.new([document_id, ".tmp"])
+      temp_file.binmode
+      temp_file.write(image_data)
+      temp_file.rewind
 
-    @logger.tagged(@document.id, 'IMAGE_TEMPFILE') { @logger.info file.inspect }
-
-    file
+      @metadata['image_tempfile'] = temp_file.inspect
+      temp_file
+    else
+      return nil
+    end
   end
 
   # Returns geoserver auth credentials if the document is a restriced Local WMS layer.
@@ -80,71 +111,38 @@ class ImageService
     end
   end
 
-  def placeholder_base_path
-    Rails.root.join('app', 'assets', 'images')
-  end
-
-  # Generates hash containing placeholder mime_type and image.
-  def placeholder_data
-    { type: 'image/png', data: placeholder_image }
-  end
-
-  # Gets placeholder image from disk.
-  def placeholder_image
-    File.read(placeholder_image_path)
-  end
-
-  # Path to placeholder image based on the layer geometry.
-  def placeholder_image_path
-    geom_type = @document.fetch('layer_geom_type_s', '').tr(' ', '-').downcase
-    thumb_path = "#{placeholder_base_path}/thumbnail-#{geom_type}.png"
-    return "#{placeholder_base_path}/thumbnail-paper-map.png" unless File.exist?(thumb_path)
-    thumb_path
-  end
-
   # Generates hash containing thumbnail mime_type and image.
   def image_data
-    return placeholder_data unless image_url
-    { type: remote_content_type, data: remote_image }
+    return nil unless image_url
+    remote_image
   end
 
-  # Gets thumbnail image from URL. On error, returns document's placeholder image.
-  def remote_content_type
-    auth = geoserver_credentials
-
-    conn = Faraday.new(url: image_url) do |b|
-      b.use FaradayMiddleware::FollowRedirects
-      b.adapter :net_http
-    end
-
-    conn.options.timeout = timeout
-    conn.options.timeout = timeout
-    conn.authorization :Basic, auth if auth
-
-    conn.head.headers['content-type']
-  rescue Faraday::Error::ConnectionFailed
-    placeholder_data[:type]
-  rescue Faraday::Error::TimeoutError
-    placeholder_data[:type]
-
-  # Rescuing Exception intentionally
-  rescue Exception
-    placeholder_data[:type]
-  end
-
-  # Gets thumbnail image from URL. On error, returns document's placeholder image.
+  # Gets thumbnail image from URL. On error, placehold image.
   def remote_image
     auth = geoserver_credentials
-    conn = Faraday.new(url: image_url)
-    conn.options.timeout = timeout
-    conn.options.timeout = timeout
-    conn.authorization :Basic, auth if auth
 
-    conn.get.body
+    uri = Addressable::URI.parse(image_url)
+
+    if uri.scheme.include?("http")
+      conn = Faraday.new(url: uri.normalize.to_s) do |b|
+        b.use FaradayMiddleware::FollowRedirects
+        b.adapter :net_http
+      end
+
+      conn.options.timeout = timeout
+      conn.authorization :Basic, auth if auth
+      conn.get.body
+    else
+      return nil
+    end
   rescue Faraday::Error::ConnectionFailed
-    placeholder_image
+    @metadata['error'] = "Faraday::Error::ConnectionFailed"
+    @metadata['placeheld'] = true
+    return nil
   rescue Faraday::Error::TimeoutError
-    placeholder_image
+    @metadata['error'] = "Faraday::Error::TimeoutError"
+    @metadata['placeheld'] = true
+    return nil
   end
 
   # Returns the thumbnail url.
@@ -163,11 +161,6 @@ class ImageService
         service_url || image_reference
       end
     end
-  end
-
-  # Determines the image file extension
-  def image_extension
-    @image_extension ||= Rack::Mime::MIME_TYPES.rassoc(remote_content_type).try(:first) || '.png'
   end
 
   # Checks if the document is Local restriced access and is a scanned map.
@@ -189,9 +182,15 @@ class ImageService
     @service_url ||= begin
       return unless @document.available?
       protocol = @document.viewer_protocol
-      return if protocol == 'map' || protocol.nil?
+      if protocol == 'map' || protocol.nil?
+        @metadata['error'] = "Unsupported viewer protocol"
+        @metadata['placeheld'] = true
+        return nil
+      end
       "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
     rescue NameError
+      @metadata['error'] = "service_url NameError"
+      @metadata['placeheld'] = true
       return nil
     end
   end
@@ -202,13 +201,21 @@ class ImageService
     JSON.parse(@document[@document.references.reference_field])['http://schema.org/thumbnailUrl']
   end
 
-  # Default thumbnail size.
+  # Default image size.
   def image_size
-    300
+    1500
   end
 
   # Faraday timeout value.
   def timeout
     30
+  end
+
+  # Capture metadata within image harvest log
+  def log_output
+    @metadata["state"] = @document.sidecar.image_state.current_state
+    @metadata.each do |key,value|
+      @logger.tagged(@document.id, key.to_s) { @logger.info value }
+    end
   end
 end

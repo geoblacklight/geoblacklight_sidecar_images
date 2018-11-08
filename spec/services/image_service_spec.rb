@@ -34,14 +34,9 @@ describe ImageService do
         expect(iiif_imgsvc.send(:image_url)).to be_kind_of String
         expect(URI(iiif_imgsvc.send(:image_url))).to be_kind_of URI
       end
-
-      it 'should determine :remote_content_type' do
-        expect(iiif_imgsvc.send(:remote_content_type)).to eq 'image/jpeg'
-      end
-
-      it 'should determine :image_extension' do
-        expect(iiif_imgsvc.send(:image_extension)).to eq '.jpeg'
-      end
     end
   end
+
+  # Minnesota-urn-0f7ae38b-4bf2-4e03-a32b-e87f245ccb03
+  # => attachable? should be false
 end
