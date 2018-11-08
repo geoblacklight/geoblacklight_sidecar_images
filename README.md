@@ -179,6 +179,24 @@ If you add a thumbnail uri to your geoblacklight solr documents...
 
 Then you can edit your GeoBlacklight settings.yml file to point at that solr field (Settings.GBLSI_THUMBNAIL_FIELD). Any docs in your index that have a value for that field will harvest the image at that URI instead of trying to retrieve an image via IIIF or the other web services.
 
+## View customization
+
+This GBL plugin includes a custom catalog/_index_split_default.html.erb file. Look there for examples on calling the image method.
+
+```ruby
+# Is there an image?
+document.sidecar.image.attached?
+
+# Can the image size be manipulated?
+document.sidecar.image.variable?
+
+# Example image_tag with resize
+<%= image_tag document.sidecar.image.variant(resize: "100x100"), {class: 'media-object'} %>
+
+```
+
+You'll definitely want to update this file to fit your own design's needs.
+
 ## Development
 
 ```bash
