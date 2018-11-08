@@ -219,7 +219,7 @@ tail -f log/image_service_development.log
 
 ```
 
-[See Results](http://localhost:3000/?per_page=50&q=&search_field=all_fields)
+[See Localhost Results](http://localhost:3000/?per_page=50&q=&search_field=all_fields)
 
 ## TODOs
 
