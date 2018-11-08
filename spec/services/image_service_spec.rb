@@ -10,6 +10,8 @@ describe ImageService do
   let(:thumb_document) { SolrDocument.new(json_data('umn_solr_thumb')) }
   let(:thumb_imgsvc) { ImageService.new(thumb_document) }
 
+  # @TODO: bdcbcd3e-f6db-4ee4-b7b7-d75fe35f1d92 - Michigan State - thumbnail_path_ss
+
   describe '#store' do
     it 'should respond to store' do
       expect(iiif_imgsvc).to respond_to(:store)
@@ -32,14 +34,9 @@ describe ImageService do
         expect(iiif_imgsvc.send(:image_url)).to be_kind_of String
         expect(URI(iiif_imgsvc.send(:image_url))).to be_kind_of URI
       end
-
-      it 'should determine :remote_content_type' do
-        expect(iiif_imgsvc.send(:remote_content_type)).to eq 'image/jpeg'
-      end
-
-      it 'should determine :image_extension' do
-        expect(iiif_imgsvc.send(:image_extension)).to eq '.jpeg'
-      end
     end
   end
+
+  # Minnesota-urn-0f7ae38b-4bf2-4e03-a32b-e87f245ccb03
+  # => attachable? should be false
 end

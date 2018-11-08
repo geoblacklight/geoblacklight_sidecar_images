@@ -3,8 +3,15 @@
 class StoreImageJob < ApplicationJob
   queue_as :default
 
-  def perform(document_hash)
-    doc = SolrDocument.new(document_hash)
-    ImageService.new(doc).store
+  def perform(solr_document_id)
+    cat = CatalogController.new
+    response, document = cat.fetch(solr_document_id)
+
+    metadata = Hash.new
+    metadata['solr_doc_id'] = document.id
+    metadata['solr_version'] = document.sidecar.version
+
+    document.sidecar.image_state.transition_to!(:queued, metadata)
+    ImageService.new(document).store
   end
 end
