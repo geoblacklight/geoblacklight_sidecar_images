@@ -8,7 +8,7 @@
 Store local copies of remote imagery in GeoBlacklight.
 
 ## Description
-This GeoBlacklight plugin captures remote images from geographic web services and saves them locally. It borrows the concept of a [SolrDocumentSidecar](https://github.com/projectblacklight/spotlight/blob/master/app/models/spotlight/solr_document_sidecar.rb) from [Spotlight](https://github.com/projectblacklight/spotlight), to have an ActiveRecord-based "sidecar" to match each non-AR SolrDocument. This allows us to use [ActionStorage](https://github.com/rails/rails/tree/master/activestorage) to attach images to our solr documents.
+This GeoBlacklight plugin captures remote images from geographic web services and saves them locally. It borrows the concept of a [SolrDocumentSidecar](https://github.com/projectblacklight/spotlight/blob/master/app/models/spotlight/solr_document_sidecar.rb) from [Spotlight](https://github.com/projectblacklight/spotlight), to have an ActiveRecord-based "sidecar" to match each non-AR SolrDocument. This allows us to use [ActiveStorage](https://github.com/rails/rails/tree/master/activestorage) to attach images to our solr documents.
 
 ### Example Screenshot
 ![Screenshot](screenshot.png)
@@ -81,7 +81,7 @@ rake gblsci:images:harvest_all
 
 #### Harvest an individual image
 
-Let's you add images one document id at a time.
+Allows you to add images one document id at a time.
 
 ```bash
 rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
@@ -89,13 +89,13 @@ rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
 
 #### Harvest all incomplete states
 
-Harvesting is retried for all non-successful state objects.
+Reattempt image harvesting for all non-successful state objects.
 
 ```bash
 rake gblsci:images:harvest_retry
 ```
 
-## Check image states
+### Check image states
 
 ```bash
 rake gblsci:images:harvest_states
@@ -113,7 +113,7 @@ We use a state machine library to track success/failure of our harvest tasks. Th
 ```ruby
 SolrDocumentSidecar.image.attached? => [true/false]
 SolrDocumentSidecar.image_state.current_state => "placeheld"
-SolrDocumentSidecar.image_state.last_transition => Object with state data, harvest information within the metadata hash
+SolrDocumentSidecar.image_state.last_transition => #<SidecarImageTransition id: 207, to_state: "placeheld", metadata: {"solr_doc_id"=>"stanford-cg357zz0321", "solr_version"=>1616509329754554368, "placeheld"=>true, "viewer_protocol"=>"wms", "image_url"=>"http://geowebservices-restricted.stanford.edu/geoserver/wms/reflect?&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=druid:cg357zz0321&WIDTH=300&HEIGHT=300", "service_url"=>"http://geowebservices-restricted.stanford.edu/geoserver/wms/reflect?&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=druid:cg357zz0321&WIDTH=300&HEIGHT=300", "gblsi_thumbnail_uri"=>false, "error"=>"Faraday::Error::ConnectionFailed"},...>
 ```
 
 ### Destroy images
