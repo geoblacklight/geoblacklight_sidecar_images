@@ -50,6 +50,9 @@ Metrics/MethodLength:
 Style/Documentation:
   Enabled: false
 
+Style/MutableConstant:
+  Enabled: false
+
 # Overrides method in blacklight. Must use method name.
 Naming/PredicateName:
   Exclude:
