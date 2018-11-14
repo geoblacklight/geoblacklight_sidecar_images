@@ -5,9 +5,9 @@ class StoreImageJob < ApplicationJob
 
   def perform(solr_document_id)
     cat = CatalogController.new
-    response, document = cat.fetch(solr_document_id)
+    _response, document = cat.fetch(solr_document_id)
 
-    metadata = Hash.new
+    metadata = {}
     metadata['solr_doc_id'] = document.id
     metadata['solr_version'] = document.sidecar.version
 

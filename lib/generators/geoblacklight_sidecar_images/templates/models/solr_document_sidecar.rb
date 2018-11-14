@@ -21,7 +21,7 @@ class SolrDocumentSidecar < ApplicationRecord
   end
 
   def image_state
-    @state_machine ||= SidecarImageStateMachine.new(
+    @image_state ||= SidecarImageStateMachine.new(
       self,
       transition_class: SidecarImageTransition
     )
@@ -36,7 +36,7 @@ class SolrDocumentSidecar < ApplicationRecord
   end
 
   def self.image_url
-    Rails.application.routes.url_helpers.rails_blob_path(self.image, only_path: true)
+    Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
   end
 
   private_class_method :initial_state
@@ -44,7 +44,7 @@ class SolrDocumentSidecar < ApplicationRecord
   private
 
   def reimage
-    self.image.purge if self.image.attached?
-    StoreImageJob.perform_later(self.document.id)
+    image.purge if image.attached?
+    StoreImageJob.perform_later(document.id)
   end
 end

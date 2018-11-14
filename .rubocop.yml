@@ -1,16 +1,13 @@
+require: rubocop-rspec
+
 Rails:
   Enabled: true
 
 AllCops:
   DisplayCopNames: true
 
-  Include:
-  - '**/Gemfile'
-  - '**/Rakefile'
-
   Exclude:
   - 'db/**/*'
-  - 'vendor/**/*'
   - '.internal_test_app/**/*'
   - 'lib/generators/geoblacklight/templates/**/*'
   - 'geoblacklight_sidecar_images.gemspec'
@@ -26,7 +23,7 @@ Lint/RescueException:
 Metrics/BlockLength:
   Exclude:
   - 'spec/**/*'
-    
+
 Metrics/LineLength:
   Max: 100
   Exclude:
@@ -44,30 +41,22 @@ Metrics/AbcSize:
 
 Metrics/MethodLength:
   Max: 16
+  Exclude:
+  - 'spec/**/*'
+  - 'Rakefile'
+  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
 
 # TODO: Add top-level class and module documentation.
 Style/Documentation:
   Enabled: false
 
 # Overrides method in blacklight. Must use method name.
-Style/PredicateName:
+Naming/PredicateName:
   Exclude:
     - 'lib/geoblacklight/view_helper_override.rb'
 
 RSpec/FilePath:
   Enabled: false
-
-# Rubocop bug causes view specs to fail.
-#  https://github.com/nevir/rubocop-rspec/issues/47
-RSpec/DescribeClass:
-  Enabled: false
-
-# geoblacklight references in solr_document_spec are
-# difficult to mock because of the use of 'method_missing'.
-# https://relishapp.com/rspec/rspec-mocks/docs/verifying-doubles/dynamic-classes
-RSpec/AnyInstance:
-  Exclude:
-    - 'spec/models/concerns/geoblacklight/solr_document_spec.rb'
 
 Style/SignalException:
   EnforcedStyle: semantic
@@ -78,7 +67,7 @@ Style/StringLiterals:
   Enabled: true
   EnforcedStyle: single_quotes
 
-Style/DotPosition:
+Layout/DotPosition:
   Description: Checks the position of the dot in multi-line method calls.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-multi-line-chains
   Enabled: true
