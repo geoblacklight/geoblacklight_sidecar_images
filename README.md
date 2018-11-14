@@ -60,11 +60,11 @@ $ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight
 
 ```bash
   # Run your GBL instance
-  rake geoblacklight:server
+  bundle exec rake geoblacklight:server
 ```
 
 ```bash
-rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+bundle exec rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
 ```
 
 ## Rake tasks
@@ -76,7 +76,7 @@ rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_image
 Spawns background jobs to harvest images for all documents in your Solr index.
 
 ```bash
-rake gblsci:images:harvest_all
+bundle exec rake gblsci:images:harvest_all
 ```
 
 #### Harvest an individual image
@@ -84,7 +84,7 @@ rake gblsci:images:harvest_all
 Allows you to add images one document id at a time.
 
 ```bash
-rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
+bundle exec rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
 ```
 
 #### Harvest all incomplete states
@@ -92,13 +92,13 @@ rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
 Reattempt image harvesting for all non-successful state objects.
 
 ```bash
-rake gblsci:images:harvest_retry
+bundle exec rake gblsci:images:harvest_retry
 ```
 
 ### Check image states
 
 ```bash
-rake gblsci:images:harvest_states
+bundle exec rake gblsci:images:harvest_states
 ```
 
 We use a state machine library to track success/failure of our harvest tasks. The states we track are:
@@ -123,7 +123,7 @@ SolrDocumentSidecar.image_state.last_transition => #<SidecarImageTransition id: 
 Remove all sidecar objects and attached images
 
 ```bash
-rake gblsci:images:harvest_purge_all
+bundle exec rake gblsci:images:harvest_purge_all
 ```
 
 #### Remove orphaned AR objects
@@ -131,7 +131,7 @@ rake gblsci:images:harvest_purge_all
 Remove all sidecar objects and attached images for AR objects without a corresponding Solr document
 
 ```bash
-rake gblsci:images:harvest_purge_orphans
+bundle exec rake gblsci:images:harvest_purge_orphans
 ```
 
 #### Remove a batch
@@ -139,7 +139,7 @@ rake gblsci:images:harvest_purge_orphans
 Remove sidecar objects and attached images via a CSV file of document ids
 
 ```bash
-rake gblsci:images:harvest_purge_orphans
+bundle exec rake gblsci:images:harvest_purge_orphans
 ```
 
 ### Troubleshooting
@@ -149,7 +149,7 @@ rake gblsci:images:harvest_purge_orphans
 Generate a CSV file of sidecar objects and associated image state. Useful for debugging problem items.
 
 ```bash
-rake gblsci:images:harvest_report
+bundle exec rake gblsci:images:harvest_report
 ```
 
 #### Failed state inspect
@@ -157,7 +157,7 @@ rake gblsci:images:harvest_report
 Prints details for failed state harvest objects to stdout
 
 ```bash
-rake gblsci:images:harvest_failed_state_inspect
+bundle exec rake gblsci:images:harvest_failed_state_inspect
 ```
 
 ## Prioritize Solr Thumbnail Field URIs
