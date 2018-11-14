@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-require "addressable/uri"
-require "mimemagic"
+
+require 'addressable/uri'
+require 'mimemagic'
 
 class ImageService
   attr_reader :document
@@ -9,7 +10,7 @@ class ImageService
   def initialize(document)
     @document = document
 
-    @metadata = Hash.new
+    @metadata = {}
     @metadata['solr_doc_id'] = document.id
     @metadata['solr_version'] = @document.sidecar.version
     @metadata['placeheld'] = false
@@ -18,9 +19,7 @@ class ImageService
 
     @logger ||= ActiveSupport::TaggedLogging.new(
       Logger.new(
-        File.join(
-          Rails.root, '/log/', "image_service_#{Rails.env}.log"
-        )
+        Rails.root.join('log', "image_service_#{Rails.env}.log")
       )
     )
   end
@@ -36,29 +35,11 @@ class ImageService
 
     if io_file.nil? || @metadata['placeheld'] == true
       @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
-      log_output
     else
-      # Remote content-type headers are untrustworthy
-      # Pull the mimetype and file extension via MimeMagic
-      mm = MimeMagic.by_magic(File.open(io_file))
-
-      @metadata['MimeMagic_type'] = mm.type
-      @metadata['MimeMagic_mediatype'] = mm.mediatype
-      @metadata['MimeMagic_subtype'] = mm.subtype
-
-      if mm.mediatype == "image"
-        @document.sidecar.image.attach(
-          io: io_file,
-          filename: "#{@document.id}.#{mm.subtype}",
-          content_type: mm.type
-        )
-        @document.sidecar.image_state.transition_to!(:succeeded, @metadata)
-      else
-        @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
-      end
-
-      log_output
+      attach_io(io_file)
     end
+
+    log_output
   rescue Exception => invalid
     @metadata['exception'] = invalid.inspect
     @document.sidecar.image_state.transition_to!(:failed, @metadata)
@@ -74,22 +55,42 @@ class ImageService
     @metadata['service_url']          = service_url
     @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
 
-    if image_data && @metadata['placeheld'] == false
-      temp_file = Tempfile.new([document_id, ".tmp"])
-      temp_file.binmode
-      temp_file.write(image_data)
-      temp_file.rewind
+    return nil unless image_data && @metadata['placeheld'] == false
 
-      @metadata['image_tempfile'] = temp_file.inspect
-      temp_file
+    temp_file = Tempfile.new([document_id, '.tmp'])
+    temp_file.binmode
+    temp_file.write(image_data)
+    temp_file.rewind
+
+    @metadata['image_tempfile'] = temp_file.inspect
+    temp_file
+  end
+
+  def attach_io(io)
+    # Remote content-type headers are untrustworthy
+    # Pull the mimetype and file extension via MimeMagic
+    mm = MimeMagic.by_magic(File.open(io))
+
+    @metadata['MimeMagic_type'] = mm.type
+    @metadata['MimeMagic_mediatype'] = mm.mediatype
+    @metadata['MimeMagic_subtype'] = mm.subtype
+
+    if mm.mediatype == 'image'
+      @document.sidecar.image.attach(
+        io: io,
+        filename: "#{@document.id}.#{mm.subtype}",
+        content_type: mm.type
+      )
+      @document.sidecar.image_state.transition_to!(:succeeded, @metadata)
     else
-      return nil
+      @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
     end
   end
 
   # Returns geoserver auth credentials if the document is a restriced Local WMS layer.
   def geoserver_credentials
     return unless restricted_wms_layer?
+
     Settings.PROXY_GEOSERVER_AUTH.gsub('Basic ', '')
   end
 
@@ -114,6 +115,7 @@ class ImageService
   # Generates hash containing thumbnail mime_type and image.
   def image_data
     return nil unless image_url
+
     remote_image
   end
 
@@ -123,26 +125,24 @@ class ImageService
 
     uri = Addressable::URI.parse(image_url)
 
-    if uri.scheme.include?("http")
-      conn = Faraday.new(url: uri.normalize.to_s) do |b|
-        b.use FaradayMiddleware::FollowRedirects
-        b.adapter :net_http
-      end
+    return nil unless uri.scheme.include?('http')
 
-      conn.options.timeout = timeout
-      conn.authorization :Basic, auth if auth
-      conn.get.body
-    else
-      return nil
+    conn = Faraday.new(url: uri.normalize.to_s) do |b|
+      b.use FaradayMiddleware::FollowRedirects
+      b.adapter :net_http
     end
+
+    conn.options.timeout = timeout
+    conn.authorization :Basic, auth if auth
+    conn.get.body
   rescue Faraday::Error::ConnectionFailed
-    @metadata['error'] = "Faraday::Error::ConnectionFailed"
+    @metadata['error'] = 'Faraday::Error::ConnectionFailed'
     @metadata['placeheld'] = true
-    return nil
+    nil
   rescue Faraday::Error::TimeoutError
-    @metadata['error'] = "Faraday::Error::TimeoutError"
+    @metadata['error'] = 'Faraday::Error::TimeoutError'
     @metadata['placeheld'] = true
-    return nil
+    nil
   end
 
   # Returns the thumbnail url.
@@ -179,25 +179,28 @@ class ImageService
   # from the viewer protocol, and if it's loaded, the image_url
   # method is called.
   def service_url
-    @service_url ||= begin
-      return unless @document.available?
-      protocol = @document.viewer_protocol
-      if protocol == 'map' || protocol.nil?
-        @metadata['error'] = "Unsupported viewer protocol"
+    @service_url ||=
+      begin
+        return unless @document.available?
+
+        protocol = @document.viewer_protocol
+        if protocol == 'map' || protocol.nil?
+          @metadata['error'] = 'Unsupported viewer protocol'
+          @metadata['placeheld'] = true
+          return nil
+        end
+        "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
+      rescue NameError
+        @metadata['error'] = 'service_url NameError'
         @metadata['placeheld'] = true
         return nil
       end
-      "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
-    rescue NameError
-      @metadata['error'] = "service_url NameError"
-      @metadata['placeheld'] = true
-      return nil
-    end
   end
 
   # Retreives a url to a static thumbnail from the document's dct_references field, if it exists.
   def image_reference
     return nil if @document[@document.references.reference_field].nil?
+
     JSON.parse(@document[@document.references.reference_field])['http://schema.org/thumbnailUrl']
   end
 
@@ -213,8 +216,8 @@ class ImageService
 
   # Capture metadata within image harvest log
   def log_output
-    @metadata["state"] = @document.sidecar.image_state.current_state
-    @metadata.each do |key,value|
+    @metadata['state'] = @document.sidecar.image_state.current_state
+    @metadata.each do |key, value|
       @logger.tagged(@document.id, key.to_s) { @logger.info value }
     end
   end

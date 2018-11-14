@@ -10,6 +10,9 @@ describe Geoblacklight::SolrDocument do
 
     it 'responds to sidecar method' do
       expect(document).to respond_to :sidecar
+    end
+
+    it 'responds with SolrDocumentSidecar' do
       expect(document.sidecar).to be_kind_of SolrDocumentSidecar
     end
   end

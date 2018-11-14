@@ -1,4 +1,6 @@
-class SidecarImageTransition < ActiveRecord::Base
+# frozen_string_literal: true
+
+class SidecarImageTransition < ApplicationRecord
   include Statesman::Adapters::ActiveRecordTransition
 
   validates :to_state, inclusion: { in: SidecarImageStateMachine.states }
