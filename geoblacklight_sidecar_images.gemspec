@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = GeoblacklightSidecarImages::VERSION
   s.authors     = ['Eric Larson', 'Eliot Jordan']
   s.email       = ['ewlarson@umn.edu']
-  s.homepage    = 'https://github.com/ewlarson/geoblacklight_sidecar_images'
+  s.homepage    = 'https://github.com/geoblacklight/geoblacklight_sidecar_images'
   s.summary     = 'Store local copies of remote imagery in GeoBlacklight'
   s.license     = 'Apache 2.0'
 
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency 'geoblacklight', '~> 1.9'
+  s.add_dependency 'geoblacklight', '~> 2.0'
   s.add_dependency 'mini_magick', '~> 4.8'
   s.add_dependency 'image_processing', '~> 1.6'
   s.add_dependency 'statesman', '~> 3.4'
