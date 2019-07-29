@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_dependency 'geoblacklight', '~> 2.0'
-  s.add_dependency 'mini_magick', '~> 4.8'
+  s.add_dependency 'mini_magick', '~> 4.9.4'
   s.add_dependency 'image_processing', '~> 1.6'
   s.add_dependency 'statesman', '~> 3.4'
   s.add_dependency 'mimemagic', '~> 0.3'
