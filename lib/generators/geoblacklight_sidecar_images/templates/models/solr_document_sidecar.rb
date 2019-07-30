@@ -5,7 +5,7 @@
 class SolrDocumentSidecar < ApplicationRecord
   include Statesman::Adapters::ActiveRecordQueries
 
-  belongs_to :document, required: true, polymorphic: true
+  belongs_to :document, optional: false, polymorphic: true
   has_many :sidecar_image_transitions, autosave: false
   has_one_attached :image
 
