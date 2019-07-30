@@ -4,8 +4,7 @@ class StoreImageJob < ApplicationJob
   queue_as :default
 
   def perform(solr_document_id)
-    cat = CatalogController.new
-    _response, document = cat.fetch(solr_document_id)
+    document = Geoblacklight::SolrDocument.find(solr_document_id)
 
     metadata = {}
     metadata['solr_doc_id'] = document.id
