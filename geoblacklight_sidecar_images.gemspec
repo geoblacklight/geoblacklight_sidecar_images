@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'byebug'
   s.add_development_dependency 'capybara'
-  s.add_development_dependency 'chromedriver-helper'
+  s.add_development_dependency 'webdrivers'
   s.add_development_dependency 'database_cleaner', '~> 1.3'
   s.add_development_dependency 'engine_cart', '~> 2.2'
   s.add_development_dependency 'rspec-rails', '~> 3.0'
