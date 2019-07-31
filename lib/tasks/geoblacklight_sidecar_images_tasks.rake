@@ -84,10 +84,9 @@ namespace :gblsci do
         puts "#{state} - #{sidecars.size}"
 
         sidecars.each do |sc|
-          cat = CatalogController.new
           begin
-            resp, doc = cat.fetch(sc.document_id)
-            StoreImageJob.perform_later(doc.id)
+            document = Geoblacklight::SolrDocument.find(sc.document_id)
+            StoreImageJob.perform_later(document.id)
           rescue
             puts "orphaned / #{sc.document_id}"
           end
@@ -121,14 +120,14 @@ namespace :gblsci do
         sidecars.each do |sc|
           cat = CatalogController.new
           begin
-            resp, doc = cat.fetch(sc.document_id)
+            document = Geoblacklight::SolrDocument.find(sc.document_id)
             writer << [
               sc.id,
               sc.document_id,
               sc.image_state.current_state,
-              doc._source['layer_geom_type_s'],
-              doc._source['dc_title_s'],
-              doc._source['dct_provenance_s'],
+              document._source['layer_geom_type_s'],
+              document._source['dc_title_s'],
+              document._source['dct_provenance_s'],
               sc.image_state.last_transition.metadata['exception'],
               sc.image_state.last_transition.metadata['viewer_protocol'],
               sc.image_state.last_transition.metadata['image_url'],
@@ -163,9 +162,8 @@ namespace :gblsci do
       # Remove all images
       sidecars = SolrDocumentSidecar.all
       sidecars.each do |sc|
-        cat = CatalogController.new
         begin
-          resp, doc = cat.fetch(sc.document_id)
+          document = Geoblacklight::SolrDocument.find(sc.document_id)
         rescue
           sc.destroy
           puts "orphaned / #{sc.document_id} / destroyed"
