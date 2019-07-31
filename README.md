@@ -64,7 +64,7 @@ $ rails new app-name -m https://raw.githubusercontent.com/geoblacklight/geoblack
 ```
 
 ```bash
-bundle exec rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+bundle exec rake gblsci:sample_data:seed
 ```
 
 ## Rake tasks
@@ -209,7 +209,7 @@ cd .internal_test_app/
 rake geoblacklight:server
 
 # Load test fixtures
-bundle exec rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+bundle exec rake gblsci:sample_data:seed
 
 # Run harvest
 bundle exec rake gblsci:images:harvest_all
