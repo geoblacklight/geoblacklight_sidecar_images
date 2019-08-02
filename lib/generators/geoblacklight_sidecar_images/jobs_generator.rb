@@ -8,13 +8,8 @@ module GeoblacklightSidecarImages
 
     desc <<-DESCRIPTION
       This generator makes the following changes to your application:
-       1. Copies jobs files to host app/jobs
-       2. Configures a default development environment queue adapter
+       1. Configures a default development environment queue adapter
     DESCRIPTION
-
-    def create_store_image_jobs
-      copy_file 'jobs/store_image_job.rb', 'app/jobs/store_image_job.rb'
-    end
 
     def config_development_jobs_queue_adapter
       job_config = <<-"JOBS"

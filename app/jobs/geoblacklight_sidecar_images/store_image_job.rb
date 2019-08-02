@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StoreImageJob < ApplicationJob
+class GeoblacklightSidecarImages::StoreImageJob < ApplicationJob
   queue_as :default
 
   def perform(solr_document_id)
@@ -11,6 +11,6 @@ class StoreImageJob < ApplicationJob
     metadata['solr_version'] = document.sidecar.version
 
     document.sidecar.image_state.transition_to!(:queued, metadata)
-    ImageService.new(document).store
+    GeoblacklightSidecarImages::ImageService.new(document).store
   end
 end
