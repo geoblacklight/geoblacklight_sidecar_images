@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImageService
+class GeoblacklightSidecarImages::ImageService
   module Wms
     ##
     # Formats and returns a thumbnail url from a Web Map Service endpoint.

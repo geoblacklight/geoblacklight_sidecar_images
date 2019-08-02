@@ -45,6 +45,6 @@ class SolrDocumentSidecar < ApplicationRecord
 
   def reimage
     image.purge if image.attached?
-    StoreImageJob.perform_later(document.id)
+    GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
   end
 end

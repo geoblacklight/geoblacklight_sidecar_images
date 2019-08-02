@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImageService
+class GeoblacklightSidecarImages::ImageService
   module TiledMapLayer
     ##
     # Formats and returns an image url from an ESRI Tiled Map Layer endpoint.

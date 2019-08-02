@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImageService
+class GeoblacklightSidecarImages::ImageService
   module Iiif
     ##
     # Formats and returns a thumbnail url from an International Image

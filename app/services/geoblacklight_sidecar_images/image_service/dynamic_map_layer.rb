@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImageService
+class GeoblacklightSidecarImages::ImageService
   module DynamicMapLayer
     ##
     # Formats and returns a thumbnail url from an ESRI Dynamic Map Layer endpoint.

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ImageService
+class GeoblacklightSidecarImages::ImageService
   module ImageMapLayer
     ##
     # Formats and returns a thumbnail url from an ESRI Image Map Layer endpoint.

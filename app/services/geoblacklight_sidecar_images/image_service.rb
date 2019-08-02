@@ -3,7 +3,7 @@
 require 'addressable/uri'
 require 'mimemagic'
 
-class ImageService
+class GeoblacklightSidecarImages::ImageService
   attr_reader :document
   attr_writer :metadata, :logger
 
@@ -189,7 +189,7 @@ class ImageService
           @metadata['placeheld'] = true
           return nil
         end
-        "ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
+        "GeoblacklightSidecarImages::ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
       rescue NameError
         @metadata['error'] = 'service_url NameError'
         @metadata['placeheld'] = true

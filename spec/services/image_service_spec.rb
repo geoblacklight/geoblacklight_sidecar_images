@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe ImageService do
+describe GeoblacklightSidecarImages::ImageService do
   let(:iiif_document) { SolrDocument.new(json_data('umich_iiif_jpg')) }
   let(:iiif_imgsvc) { described_class.new(iiif_document) }
   let(:wms_document) { SolrDocument.new(json_data('public_polygon_mit')) }
