@@ -37,7 +37,7 @@ namespace :gblsci do
         results.docs.each do |document|
           sleep(1)
           begin
-            StoreImageJob.perform_later(document.id)
+            GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
           rescue Blacklight::Exceptions::RecordNotFound
             next
           end
@@ -85,7 +85,7 @@ namespace :gblsci do
         sidecars.each do |sc|
           begin
             document = Geoblacklight::SolrDocument.find(sc.document_id)
-            StoreImageJob.perform_later(document.id)
+            GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
           rescue
             puts "orphaned / #{sc.document_id}"
           end
