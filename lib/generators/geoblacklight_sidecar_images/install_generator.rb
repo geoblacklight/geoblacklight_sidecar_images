@@ -16,23 +16,23 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       end
     end
 
-    def generate_geoblacklight_example_docs
+    def generate_gblsci_assets
+      copy_file 'gblsci.scss', 'app/assets/stylesheets/gblsci.scss'
+    end
+
+    def generate_gblsci_example_docs
       generate 'geoblacklight_sidecar_images:example_docs'
     end
 
-    def generate_geoblacklight_jobs
+    def generate_gblsci_jobs
       generate 'geoblacklight_sidecar_images:jobs'
     end
 
-    def generate_geoblacklight_models
+    def generate_gblsci_models
       generate 'geoblacklight_sidecar_images:models'
     end
 
-    def generate_geoblacklight_services
-      generate 'geoblacklight_sidecar_images:services'
-    end
-
-    def generate_geoblacklight_views
+    def generate_gblsci_views
       generate 'geoblacklight_sidecar_images:views'
     end
 
@@ -40,7 +40,7 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
       rake 'active_storage:install'
     end
 
-    def generate_geoblacklight_config
+    def generate_gblsci_config
       generate 'geoblacklight_sidecar_images:config'
     end
 

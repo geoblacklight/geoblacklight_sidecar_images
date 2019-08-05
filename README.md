@@ -64,6 +64,7 @@ $ rails new app-name -m https://raw.githubusercontent.com/geoblacklight/geoblack
 ```
 
 ```bash
+  # Index the GBL test fixtures
 bundle exec rake gblsci:sample_data:seed
 ```
 
@@ -206,7 +207,7 @@ bundle exec rake ci
 
 # Launch test app server
 cd .internal_test_app/
-rake geoblacklight:server
+bundle exec rake geoblacklight:server
 
 # Load test fixtures
 bundle exec rake gblsci:sample_data:seed
