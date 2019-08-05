@@ -6,7 +6,7 @@ class SolrDocumentSidecar < ApplicationRecord
   include Statesman::Adapters::ActiveRecordQueries
 
   belongs_to :document, optional: false, polymorphic: true
-  has_many :sidecar_image_transitions, autosave: false
+  has_many :sidecar_image_transitions, autosave: false, dependent: :destroy
   has_one_attached :image
 
   # If the sidecar solr document is updated, re-fetch thumbnail image

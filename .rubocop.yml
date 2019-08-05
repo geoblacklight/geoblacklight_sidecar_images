@@ -18,7 +18,7 @@ AllCops:
 
 Lint/RescueException:
   Exclude:
-  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
+  - 'app/services/geoblacklight_sidecar_images/image_service.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -29,12 +29,12 @@ Metrics/LineLength:
   Exclude:
   - 'spec/**/*'
   - 'Rakefile'
-  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
+  - 'app/services/geoblacklight_sidecar_images/image_service.rb'
 
 # TODO: Refactor large methods.
 Metrics/ClassLength:
   Exclude:
-  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
+  - 'app/services/geoblacklight_sidecar_images/image_service.rb'
 
 Metrics/AbcSize:
   Max: 28
@@ -44,7 +44,7 @@ Metrics/MethodLength:
   Exclude:
   - 'spec/**/*'
   - 'Rakefile'
-  - 'lib/generators/geoblacklight_sidecar_images/templates/services/image_service.rb'
+  - 'app/services/geoblacklight_sidecar_images/image_service.rb'
 
 # TODO: Add top-level class and module documentation.
 Style/Documentation:
