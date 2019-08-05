@@ -8,12 +8,12 @@ notifications:
   email: false
 
 rvm:
-  - 2.4.5
+  - 2.5.3
 
 matrix:
   include:
-    - rvm: 2.4.5
-      env: "RAILS_VERSION=5.2.1"
+    - rvm: 2.5.3
+      env: "RAILS_VERSION=5.2.2"
 
 before_install:
   - gem update --system
@@ -21,7 +21,7 @@ before_install:
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 
 env:
- - "RAILS_VERSION=5.2.1 "
+ - "RAILS_VERSION=5.2.2"
 
 global_env:
   - NOKOGIRI_USE_SYSTEM_LIBRARIES=true

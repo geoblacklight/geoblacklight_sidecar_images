@@ -42,34 +42,6 @@ module GeoblacklightSidecarImages
       inject_into_file 'app/models/solr_document.rb', sidecar, before: /^end/
     end
 
-    def create_solr_document_sidecar
-      copy_file(
-        'models/solr_document_sidecar.rb',
-        'app/models/solr_document_sidecar.rb'
-      )
-    end
-
-    def create_sidecar_image_transition
-      copy_file(
-        'models/sidecar_image_transition.rb',
-        'app/models/sidecar_image_transition.rb'
-      )
-    end
-
-    def create_sidecar_image_state_machine
-      copy_file(
-        'models/sidecar_image_state_machine.rb',
-        'app/models/sidecar_image_state_machine.rb'
-      )
-    end
-
-    def create_wms_rewrite_concern
-      copy_file(
-        'models/concerns/wms_rewrite_concern.rb',
-        'app/models/concerns/wms_rewrite_concern.rb'
-      )
-    end
-
     def include_wms_rewrite_solrdocument
       inject_into_file(
         'app/models/solr_document.rb',

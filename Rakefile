@@ -17,10 +17,7 @@ require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:rubocop)
 
 require 'engine_cart/rake_task'
-EngineCart.fingerprint_proc = EngineCart.rails_fingerprint_proc
 require 'geoblacklight_sidecar_images/version'
-
-EngineCart.fingerprint_proc = EngineCart.rails_fingerprint_proc
 
 task ci: ['engine_cart:generate'] do
   ENV['environment'] = 'test'

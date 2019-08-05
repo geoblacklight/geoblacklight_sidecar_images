@@ -1,8 +1,8 @@
 # GeoBlacklight Sidecar Images
 
-[![Build Status](https://travis-ci.org/ewlarson/geoblacklight_sidecar_images.svg?branch=master)](https://travis-ci.org/ewlarson/geoblacklight_sidecar_images)
-[![Maintainability](https://api.codeclimate.com/v1/badges/88c14165af5459963011/maintainability)](https://codeclimate.com/github/ewlarson/geoblacklight_sidecar_images/maintainability)
-[![Coverage Status](https://coveralls.io/repos/github/ewlarson/geoblacklight_sidecar_images/badge.svg?branch=master)](https://coveralls.io/github/ewlarson/geoblacklight_sidecar_images?branch=master)
+[![Build Status](https://travis-ci.org/geoblacklight/geoblacklight_sidecar_images.svg?branch=master)](https://travis-ci.org/geoblacklight/geoblacklight_sidecar_images)
+[![Maintainability](https://api.codeclimate.com/v1/badges/88c14165af5459963011/maintainability)](https://codeclimate.com/github/geoblacklight/geoblacklight_sidecar_images/maintainability)
+[![Coverage Status](https://coveralls.io/repos/github/geoblacklight/geoblacklight_sidecar_images/badge.svg?branch=master)](https://coveralls.io/github/geoblacklight/geoblacklight_sidecar_images?branch=master)
 [![Gem Version](https://badge.fury.io/rb/geoblacklight_sidecar_images.svg)](https://badge.fury.io/rb/geoblacklight_sidecar_images)
 
 Store local copies of remote imagery in GeoBlacklight.
@@ -52,7 +52,7 @@ $ bin/rails db:migrate
 Create a new GeoBlacklight instance with the GBLSI code
 
 ```bash
-$ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight_sidecar_images/master/template.rb
+$ rails new app-name -m https://raw.githubusercontent.com/geoblacklight/geoblacklight_sidecar_images/master/template.rb
 
 ```
 
@@ -64,7 +64,8 @@ $ rails new app-name -m https://raw.githubusercontent.com/ewlarson/geoblacklight
 ```
 
 ```bash
-bundle exec rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+  # Index the GBL test fixtures
+bundle exec rake gblsci:sample_data:seed
 ```
 
 ## Rake tasks
@@ -206,10 +207,10 @@ bundle exec rake ci
 
 # Launch test app server
 cd .internal_test_app/
-rake geoblacklight:server
+bundle exec rake geoblacklight:server
 
 # Load test fixtures
-bundle exec rake gblsci:sample_data:ingest['<FULL_LOCAL_PATH_TO>/geoblacklight_sidecar_images/spec/fixtures/files']
+bundle exec rake gblsci:sample_data:seed
 
 # Run harvest
 bundle exec rake gblsci:images:harvest_all

@@ -3,9 +3,8 @@ require 'csv'
 namespace :gblsci do
   namespace :sample_data do
     desc 'Ingests a directory of geoblacklight.json files'
-    task :ingest, [:directory] => :environment do |_t, args|
-      args.with_defaults(directory: 'data')
-      Dir.glob(File.join(args[:directory], '**', '*.json')).each do |fn|
+    task seed: :environment do
+      Dir.glob(File.join(Rails.root, 'solr', 'geoblacklight', 'example_docs', '**', '*.json')).each do |fn|
         puts "Ingesting #{fn}"
         begin
           Blacklight.default_index.connection.add(JSON.parse(File.read(fn)))
@@ -38,7 +37,7 @@ namespace :gblsci do
         results.docs.each do |document|
           sleep(1)
           begin
-            StoreImageJob.perform_later(document.id)
+            GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
           rescue Blacklight::Exceptions::RecordNotFound
             next
           end
@@ -84,10 +83,9 @@ namespace :gblsci do
         puts "#{state} - #{sidecars.size}"
 
         sidecars.each do |sc|
-          cat = CatalogController.new
           begin
-            resp, doc = cat.fetch(sc.document_id)
-            StoreImageJob.perform_later(doc.id)
+            document = Geoblacklight::SolrDocument.find(sc.document_id)
+            GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
           rescue
             puts "orphaned / #{sc.document_id}"
           end
@@ -121,14 +119,14 @@ namespace :gblsci do
         sidecars.each do |sc|
           cat = CatalogController.new
           begin
-            resp, doc = cat.fetch(sc.document_id)
+            document = Geoblacklight::SolrDocument.find(sc.document_id)
             writer << [
               sc.id,
               sc.document_id,
               sc.image_state.current_state,
-              doc._source['layer_geom_type_s'],
-              doc._source['dc_title_s'],
-              doc._source['dct_provenance_s'],
+              document._source['layer_geom_type_s'],
+              document._source['dc_title_s'],
+              document._source['dct_provenance_s'],
               sc.image_state.last_transition.metadata['exception'],
               sc.image_state.last_transition.metadata['viewer_protocol'],
               sc.image_state.last_transition.metadata['image_url'],
@@ -163,9 +161,8 @@ namespace :gblsci do
       # Remove all images
       sidecars = SolrDocumentSidecar.all
       sidecars.each do |sc|
-        cat = CatalogController.new
         begin
-          resp, doc = cat.fetch(sc.document_id)
+          document = Geoblacklight::SolrDocument.find(sc.document_id)
         rescue
           sc.destroy
           puts "orphaned / #{sc.document_id} / destroyed"

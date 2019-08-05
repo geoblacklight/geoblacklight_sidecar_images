@@ -10,8 +10,8 @@ class TestAppGenerator < Rails::Generators::Base
   # after setting up the application
 
   def add_gems
-    gem 'blacklight', '~> 6.0'
-    gem 'geoblacklight', '~> 1.7'
+    gem 'blacklight', '~> 7.0'
+    gem 'geoblacklight', '~> 2.0'
 
     Bundler.with_clean_env do
       run 'bundle install'
