@@ -9,9 +9,6 @@ class SolrDocumentSidecar < ApplicationRecord
   has_many :sidecar_image_transitions, autosave: false, dependent: :destroy
   has_one_attached :image
 
-  # If the sidecar solr document is updated, re-fetch thumbnail image
-  after_update :reimage, if: :saved_change_to_version?
-
   def document
     document_type.new document_type.unique_key => document_id
   end
