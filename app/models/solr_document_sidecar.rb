@@ -36,12 +36,10 @@ class SolrDocumentSidecar < ApplicationRecord
     Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
   end
 
-  private_class_method :initial_state
-
-  private
-
-  def reimage
+  def reimage!
     image.purge if image.attached?
     GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
   end
+
+  private_class_method :initial_state
 end
