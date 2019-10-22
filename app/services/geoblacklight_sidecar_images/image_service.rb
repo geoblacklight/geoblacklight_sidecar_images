@@ -180,11 +180,8 @@ module GeoblacklightSidecarImages
     # from the viewer protocol, and if it's loaded, the image_url
     # method is called.
     def service_url
-
       # Follow image_url instead
-      if gblsi_thumbnail_uri
-        return nil
-      end
+      return nil if gblsi_thumbnail_uri
 
       @service_url ||=
         begin
