@@ -9,6 +9,8 @@ describe GeoblacklightSidecarImages::ImageService do
   let(:wms_imgsvc) { described_class.new(wms_document) }
   let(:thumb_document) { SolrDocument.new(json_data('umn_solr_thumb')) }
   let(:thumb_imgsvc) { described_class.new(thumb_document) }
+  let(:map_document) { SolrDocument.new(json_data('b1g_thumbnail')) }
+  let(:map_imgsvc) { described_class.new(map_document) }
 
   # @TODO: bdcbcd3e-f6db-4ee4-b7b7-d75fe35f1d92 - Michigan State - thumbnail_path_ss
 
@@ -31,6 +33,11 @@ describe GeoblacklightSidecarImages::ImageService do
 
     it 'returns references without a settings thumbnail field value' do
       expect(wms_imgsvc.send(:image_url)).to include 'wms'
+    end
+
+    it 'returns image_url over service_url when settings thumbnail field' do
+      expect(map_imgsvc.send(:image_url)).to include 'illinois'
+      expect(map_imgsvc.send(:service_url)).to be_falsey
     end
   end
 
