@@ -47,6 +47,23 @@ Run the database migration.
 $ bin/rails db:migrate
 ```
 
+Complete any necessary [Active Storage setup](https://edgeguides.rubyonrails.org/active_storage_overview.html#setup) steps, for example:
+
+1. Add a config/storage.yml file
+
+```
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+```
+
+2. Add config/environments declarations, development.rb for example:  
+
+```
+# Store uploaded files on the local file system (see config/storage.yml for options)
+config.active_storage.service = :local
+```
+
 ### New GeoBlacklight Instance
 
 Create a new GeoBlacklight instance with the GBLSI code
