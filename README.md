@@ -205,7 +205,7 @@ Then you can edit your GeoBlacklight settings.yml file to point at that solr fie
 
 ## View customization
 
-Use basic Active Storage patterns to display imagery in your application
+Use basic Active Storage patterns to display imagery in your application.
 
 ### Example Methods
 
@@ -227,7 +227,7 @@ This GBL plugin includes a custom [catalog/_index_split_default.html.erb file](h
 
 ### Show pages
 
-Example on adding a thumbnail to the show page sidebar.
+Example for adding a thumbnail to the show page sidebar.
 
 *catalog/_show_sidebar.html.erb*
 
