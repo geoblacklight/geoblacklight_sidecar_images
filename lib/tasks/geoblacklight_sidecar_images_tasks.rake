@@ -20,7 +20,7 @@ namespace :gblsci do
   namespace :images do
     desc 'Harvest image for specific document'
     task :harvest_doc_id, [:doc_id] => [:environment] do |_t, args|
-      StoreImageJob.perform_later(args[:doc_id])
+      GeoblacklightSidecarImages::StoreImageJob.perform_later(args[:doc_id])
     end
 
     desc 'Harvest all images'
