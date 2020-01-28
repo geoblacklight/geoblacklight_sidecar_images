@@ -7,6 +7,12 @@
 
 Store local copies of remote imagery in GeoBlacklight.
 
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Rake Tasks](#rake-tasks)
+* [View Customization](#view-customization)
+* [Development](#development)
+
 ## Description
 This GeoBlacklight plugin captures remote images from geographic web services and saves them locally. It borrows the concept of a [SolrDocumentSidecar](https://github.com/projectblacklight/spotlight/blob/master/app/models/spotlight/solr_document_sidecar.rb) from [Spotlight](https://github.com/projectblacklight/spotlight), to have an ActiveRecord-based "sidecar" to match each non-AR SolrDocument. This allows us to use [ActiveStorage](https://github.com/rails/rails/tree/master/activestorage) to attach images to our solr documents.
 
@@ -19,7 +25,7 @@ This GeoBlacklight plugin captures remote images from geographic web services an
 * [GeoBlacklight](https://github.com/geoblacklight/geoblacklight)
 * [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
-## Suggested
+### Suggested
 
 * Background Job Processor
 
@@ -199,7 +205,9 @@ Then you can edit your GeoBlacklight settings.yml file to point at that solr fie
 
 ## View customization
 
-This GBL plugin includes a custom catalog/_index_split_default.html.erb file. Look there for examples on calling the image method.
+Use basic Active Storage patterns to display imagery in your application
+
+### Example Methods
 
 ```ruby
 # Is there an image?
@@ -213,7 +221,30 @@ document.sidecar.image.variable?
 
 ```
 
-You'll definitely want to update this file to fit your own design's needs.
+### Search results
+
+This GBL plugin includes a custom [catalog/_index_split_default.html.erb file](https://github.com/geoblacklight/geoblacklight_sidecar_images/blob/develop/lib/generators/geoblacklight_sidecar_images/templates/views/catalog/_index_split_default.html.erb). Look there for examples on calling the image method.
+
+### Show pages
+
+Example on adding a thumbnail to the show page sidebar.
+
+*catalog/_show_sidebar.html.erb*
+
+```ruby
+# Add to end of file
+<% if @document.sidecar.image.attached? %>
+  <% if @document.sidecar.image.variable? %>
+    <div class="card">
+      <div class="card-header">Thumbnail</div>
+      <div class="card-body">
+        <%= image_tag @document.sidecar.image.variant(resize: "200"), {class: 'mr-3'} %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+```
 
 ## Development
 
