@@ -22,7 +22,6 @@ require 'geoblacklight_sidecar_images/version'
 
 task ci: ['engine_cart:generate'] do
   ENV['environment'] = 'test'
-  
   SolrWrapper.wrap do |solr|
     solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr', 'conf')) do
       # run the tests
