@@ -16,17 +16,15 @@ RSpec::Core::RakeTask.new(:spec)
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new(:rubocop)
 
+require 'solr_wrapper/rake_task'
 require 'engine_cart/rake_task'
 require 'geoblacklight_sidecar_images/version'
 
 task ci: ['engine_cart:generate'] do
   ENV['environment'] = 'test'
-
-  SolrWrapper.wrap(port: '8983') do |solr|
+  
+  SolrWrapper.wrap do |solr|
     solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr', 'conf')) do
-      # Fixtures here
-      # Rake::Task['spotlight:fixtures'].invoke
-
       # run the tests
       Rake::Task['spec'].invoke
     end
