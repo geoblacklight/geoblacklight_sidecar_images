@@ -35,8 +35,7 @@ describe GeoblacklightSidecarImages::ImageService do
       expect(wms_imgsvc.send(:image_url)).to include 'wms'
     end
 
-    it 'returns image_url over service_url when settings thumbnail field' do
-      expect(map_imgsvc.send(:image_url)).to include 'illinois'
+    it 'returns no service_url when settings thumbnail field' do
       expect(map_imgsvc.send(:service_url)).to be_falsey
     end
   end
