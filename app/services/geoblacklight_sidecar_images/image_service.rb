@@ -53,7 +53,6 @@ module GeoblacklightSidecarImages
     def image_tempfile(document_id)
       @metadata['viewer_protocol']      = @document.viewer_protocol
       @metadata['image_url']            = image_url
-      @metadata['service_url']          = service_url
       @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
 
       return nil unless image_data && @metadata['placeheld'] == false
