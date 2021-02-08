@@ -42,6 +42,6 @@ else
   gem 'image_processing', '~> 1.6'
   gem 'mimemagic', '~> 0.3'
   gem 'statesman', '>= 3.4'
-  gem 'rails', '~> 5.2.0', '< 6'
+  gem 'rails', '>= 5.2', '< 6.2'
 end
 # END ENGINE_CART BLOCK
