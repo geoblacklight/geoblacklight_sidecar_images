@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'database_cleaner', '~> 1.3'
   s.add_development_dependency 'engine_cart', '~> 2.2'
   s.add_development_dependency 'rspec-rails', '~> 3.0'
-  s.add_development_dependency 'rubocop', '~> 0.60.0'
+  s.add_development_dependency 'rubocop', '~> 1.9'
   s.add_development_dependency 'rubocop-rspec', '~> 1.30.0'
   s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'solr_wrapper', '~> 2.2'
