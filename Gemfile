@@ -37,7 +37,7 @@ if File.exist?(file)
   end
 else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
-  gem 'geoblacklight', '~> 3.0'
+  gem 'geoblacklight', '>= 2.0'
   gem 'mini_magick', '~> 4.9.4'
   gem 'image_processing', '~> 1.6'
   gem 'mimemagic', '~> 0.3'
