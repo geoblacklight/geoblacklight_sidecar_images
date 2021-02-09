@@ -21,8 +21,8 @@ This GeoBlacklight plugin captures remote images from geographic web services an
 
 ## Requirements
 
-* [Ruby on Rails 5.2](https://weblog.rubyonrails.org/releases/)
-* [GeoBlacklight](https://github.com/geoblacklight/geoblacklight)
+* [Ruby on Rails >= 5.2](https://weblog.rubyonrails.org/releases/)
+* [GeoBlacklight >= 2.0](https://github.com/geoblacklight/geoblacklight)
 * [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
 ### Suggested
@@ -277,5 +277,6 @@ tail -f log/image_service_development.log
 * ~~0.2.0 - Forgo attaching placeholder imagery~~
 * ~~0.3.0 - Add Statesman (state machine library)~~
 * ~~0.4.0 - Rails 5.2 branch / Switch to ActionStorage~~
-* 0.5.0 to 0.9.0 - Feedback; Improve test coverage; Collect additional real-world issues
-* 1.0.0 - Final 5.2 release
+* ~~0.7.0 - Rails 5.2+ and 6+ / GeoBlacklight 2+ and 3+ support~~
+* 0.7.0 to 0.9.0 - Feedback; Improve test coverage; Collect additional real-world issues
+* 1.0.0 - Final release

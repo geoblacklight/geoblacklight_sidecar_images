@@ -41,8 +41,8 @@ module GeoblacklightSidecarImages
       end
 
       log_output
-    rescue Exception => invalid
-      @metadata['exception'] = invalid.inspect
+    rescue Exception => e
+      @metadata['exception'] = e.inspect
       @document.sidecar.image_state.transition_to!(:failed, @metadata)
 
       log_output
