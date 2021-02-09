@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe GeoblacklightSidecarImages::SolrDocumentSidecar do
+describe SolrDocumentSidecar do
   let(:document) { SolrDocument.new(document_attributes) }
 
   describe '#sidecar' do

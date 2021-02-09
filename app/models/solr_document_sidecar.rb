@@ -3,7 +3,10 @@
 ##
 # Metadata for indexed documents
 class SolrDocumentSidecar < ApplicationRecord
-  include Statesman::Adapters::ActiveRecordQueries
+  include Statesman::Adapters::ActiveRecordQueries[
+    transition_class: SidecarImageTransition,
+    initial_state: :initialized
+  ]
 
   belongs_to :document, optional: false, polymorphic: true
   has_many :sidecar_image_transitions, autosave: false, dependent: :destroy
