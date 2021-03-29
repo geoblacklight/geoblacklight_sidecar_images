@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/geoblacklight/geoblacklight_sidecar_images.svg?branch=master)](https://travis-ci.org/geoblacklight/geoblacklight_sidecar_images)
 [![Maintainability](https://api.codeclimate.com/v1/badges/88c14165af5459963011/maintainability)](https://codeclimate.com/github/geoblacklight/geoblacklight_sidecar_images/maintainability)
 [![Coverage Status](https://coveralls.io/repos/github/geoblacklight/geoblacklight_sidecar_images/badge.svg?branch=master)](https://coveralls.io/github/geoblacklight/geoblacklight_sidecar_images?branch=master)
-[![Gem Version](https://badge.fury.io/rb/geoblacklight_sidecar_images.svg)](https://badge.fury.io/rb/geoblacklight_sidecar_images)
+[![rubygem](https://badgen.net/rubygems/v/geoblacklight_sidecar_images)](https://badgen.net/rubygems/v/geoblacklight_sidecar_images)
 
 Store local copies of remote imagery in GeoBlacklight.
 
@@ -21,8 +21,8 @@ This GeoBlacklight plugin captures remote images from geographic web services an
 
 ## Requirements
 
-* [Ruby on Rails >= 5.2](https://weblog.rubyonrails.org/releases/)
-* [GeoBlacklight >= 2.0](https://github.com/geoblacklight/geoblacklight)
+* [Ruby on Rails >= 5.2.5](https://weblog.rubyonrails.org/releases/)
+* [GeoBlacklight >= 3.3](https://github.com/geoblacklight/geoblacklight)
 * [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
 ### Suggested
