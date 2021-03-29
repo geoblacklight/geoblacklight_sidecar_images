@@ -40,8 +40,8 @@ else
   gem 'geoblacklight', '>= 2.0'
   gem 'mini_magick', '~> 4.9.4'
   gem 'image_processing', '~> 1.6'
-  gem 'mimemagic', '~> 0.3'
   gem 'statesman', '>= 3.4'
-  gem 'rails', '>= 5.2', '< 6.2'
+  gem 'marcel', '>= 1.0'
+  gem 'rails', '>= 5.2.5', '< 6.2'
 end
 # END ENGINE_CART BLOCK

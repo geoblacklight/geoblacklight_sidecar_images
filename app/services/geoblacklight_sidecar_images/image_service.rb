@@ -150,17 +150,15 @@ module GeoblacklightSidecarImages
     # have not been set beyond the default, then a thumbnail url from
     # dct references is used instead.
     def image_url
-      @image_url ||= begin
-        if gblsi_thumbnail_uri
-          gblsi_thumbnail_uri
-        elsif restricted_scanned_map?
-          image_reference
-        elsif restricted_wms_layer? && !geoserver_credentials_valid?
-          image_reference
-        else
-          service_url || image_reference
-        end
-      end
+      @image_url ||= if gblsi_thumbnail_uri
+                       gblsi_thumbnail_uri
+                     elsif restricted_scanned_map?
+                       image_reference
+                     elsif restricted_wms_layer? && !geoserver_credentials_valid?
+                       image_reference
+                     else
+                       service_url || image_reference
+                     end
     end
 
     # Checks if the document is Local restriced access and is a scanned map.
