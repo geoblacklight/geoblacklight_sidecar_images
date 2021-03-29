@@ -1,0 +1,5 @@
+validate: false
+download_dir: tmp/solr
+collection:
+  dir: solr/conf/
+  name: blacklight-core
