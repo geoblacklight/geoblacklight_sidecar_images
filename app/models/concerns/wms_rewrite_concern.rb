@@ -17,6 +17,6 @@ module WmsRewriteConcern
   end
 
   def local?
-    fetch(:dct_provenance_s, '').casecmp(Settings.INSTITUTION_LOCAL_NAME).zero?
+    fetch(Settings.FIELDS.PROVENANCE, '').casecmp(Settings.INSTITUTION_LOCAL_NAME).zero?
   end
 end
