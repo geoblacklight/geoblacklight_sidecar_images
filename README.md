@@ -163,7 +163,7 @@ bundle exec rake gblsci:images:harvest_purge_orphans
 Remove sidecar objects and attached images via a CSV file of document ids
 
 ```bash
-bundle exec rake gblsci:images:harvest_purge_orphans
+bundle exec rake gblsci:images:harvest_destroy_batch
 ```
 
 ### Troubleshooting
