@@ -4,8 +4,6 @@ ENV["RAILS_ENV"] ||= "test"
 
 require "spec_helper"
 require "database_cleaner"
-require "coveralls"
-Coveralls.wear!
 require "engine_cart"
 EngineCart.load_application!
 
