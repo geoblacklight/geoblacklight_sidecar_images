@@ -1,3 +1,4 @@
+url: https://archive.apache.org/dist/lucene/solr/8.11.2/solr-8.11.2.tgz
 validate: false
 download_dir: tmp/solr
 collection:
