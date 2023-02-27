@@ -13,9 +13,6 @@ gemspec
 # your gem to rubygems.org.
 
 group :development, :test do
-  # Peg simplecov to < 0.8 until this is resolved:
-  # https://github.com/colszowka/simplecov/issues/281
-  gem "coveralls", require: false
 end
 
 # To use a debugger
