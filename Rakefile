@@ -22,14 +22,11 @@ require "solr_wrapper/rake_task"
 require "engine_cart/rake_task"
 require "geoblacklight_sidecar_images/version"
 
+desc "Run test suite"
 task ci: ["engine_cart:generate"] do
   ENV["environment"] = "test"
-  SolrWrapper.wrap do |solr|
-    solr.with_collection(name: "blacklight-core", dir: File.join(__dir__, "solr", "conf")) do
-      # run the tests
-      Rake::Task["spec"].invoke
-    end
-  end
+  # run the tests
+  Rake::Task["spec"].invoke
 end
 
 task default: %i[rubocop ci]
