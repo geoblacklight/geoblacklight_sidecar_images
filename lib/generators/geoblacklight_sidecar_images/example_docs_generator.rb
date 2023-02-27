@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'rails/generators'
+require "rails/generators"
 
 module GeoblacklightSidecarImages
   class ExampleDocsGenerator < Rails::Generators::Base
-    source_root File.expand_path('../../../spec/fixtures', __dir__)
+    source_root File.expand_path("../../../spec/fixtures", __dir__)
 
     desc <<-DESCRIPTION
       This generator makes the following changes to your application:
@@ -12,7 +12,7 @@ module GeoblacklightSidecarImages
     DESCRIPTION
 
     def create_services
-      directory 'files', 'solr/geoblacklight/example_docs'
+      directory "files", "solr/geoblacklight/example_docs"
     end
   end
 end

@@ -12,10 +12,10 @@ class SidecarImageStateMachine
 
   # Queued => Background Job Init
   # Processing => Failed, Placeheld, Succeeded
-  transition from: :initialized,  to: %i[queued processing]
-  transition from: :queued,       to: %i[queued processing]
-  transition from: :processing,   to: %i[queued processing placeheld succeeded failed]
-  transition from: :placeheld,    to: %i[queued processing failed]
-  transition from: :failed,       to: %i[queued processing]
-  transition from: :succeeded,    to: %i[queued processing]
+  transition from: :initialized, to: %i[queued processing]
+  transition from: :queued, to: %i[queued processing]
+  transition from: :processing, to: %i[queued processing placeheld succeeded failed]
+  transition from: :placeheld, to: %i[queued processing failed]
+  transition from: :failed, to: %i[queued processing]
+  transition from: :succeeded, to: %i[queued processing]
 end

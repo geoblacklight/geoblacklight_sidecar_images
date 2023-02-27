@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'rails/generators'
+require "rails/generators"
 
 module GeoblacklightSidecarImages
   class ViewsGenerator < Rails::Generators::Base
-    source_root File.expand_path('templates', __dir__)
+    source_root File.expand_path("templates", __dir__)
 
     desc <<-DESCRIPTION
       This generator makes the following changes to your application:
@@ -13,8 +13,8 @@ module GeoblacklightSidecarImages
 
     def create_views
       copy_file(
-        'views/catalog/_index_split_default.html.erb',
-        'app/views/catalog/_index_split_default.html.erb'
+        "views/catalog/_index_split_default.html.erb",
+        "app/views/catalog/_index_split_default.html.erb"
       )
     end
   end

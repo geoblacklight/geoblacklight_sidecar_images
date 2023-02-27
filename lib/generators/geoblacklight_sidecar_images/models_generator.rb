@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'rails/generators'
-require 'rails/generators/migration'
+require "rails/generators"
+require "rails/generators/migration"
 
 module GeoblacklightSidecarImages
   class ModelsGenerator < Rails::Generators::Base
     include Rails::Generators::Migration
 
-    source_root File.expand_path('templates', __dir__)
+    source_root File.expand_path("templates", __dir__)
 
     desc <<-DESCRIPTION
       This generator makes the following changes to your application:
@@ -18,7 +18,7 @@ module GeoblacklightSidecarImages
 
     # Setup the database migrations
     def copy_migrations
-      rake 'geoblacklight_sidecar_images:install:migrations'
+      rake "geoblacklight_sidecar_images:install:migrations"
     end
 
     def include_sidecar_solrdocument
@@ -39,13 +39,13 @@ module GeoblacklightSidecarImages
         end
       SIDECAR
 
-      inject_into_file 'app/models/solr_document.rb', sidecar, before: /^end/
+      inject_into_file "app/models/solr_document.rb", sidecar, before: /^end/
     end
 
     def include_wms_rewrite_solrdocument
       inject_into_file(
-        'app/models/solr_document.rb',
-        after: 'include Geoblacklight::SolrDocument'
+        "app/models/solr_document.rb",
+        after: "include Geoblacklight::SolrDocument"
       ) do
         "\n include WmsRewriteConcern"
       end
