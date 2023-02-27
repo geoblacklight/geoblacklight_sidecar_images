@@ -41,6 +41,6 @@ else
   gem "image_processing", "~> 1.6"
   gem "statesman", ">= 3.4"
   gem "marcel", ">= 1.0"
-  gem "rails", ">= 5.2.5", "< 6.2"
+  gem "rails", ">= 5.2.5", "< 7.1"
 end
 # END ENGINE_CART BLOCK
