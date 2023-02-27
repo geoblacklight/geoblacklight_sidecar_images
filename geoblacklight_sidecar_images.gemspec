@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "image_processing", "~> 1.6"
   s.add_dependency "statesman", ">= 3.4"
   s.add_dependency "mimemagic", "~> 0.3"
-  s.add_dependency "rails", ">= 5.2", "< 6.2"
+  s.add_dependency "rails", ">= 5.2", "< 7.1"
   s.add_dependency "faraday", "~> 1.10"
 
   s.add_development_dependency "byebug"
