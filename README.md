@@ -1,7 +1,7 @@
 # GeoBlacklight Sidecar Images
 
 ![CI](https://github.com/geoblacklight/geoblacklight_sidecar_images/actions/workflows/ruby.yml/badge.svg)
-[![rubygem](https://badgen.net/rubygems/v/geoblacklight_sidecar_images)](https://badgen.net/rubygems/v/geoblacklight_sidecar_images)
+[![Gem Version](https://img.shields.io/gem/v/geoblacklight_sidecar_images.svg)](https://github.com/geoblacklight/geoblacklight_sidecar_images/releases)
 
 Store local copies of remote imagery in GeoBlacklight.
 
