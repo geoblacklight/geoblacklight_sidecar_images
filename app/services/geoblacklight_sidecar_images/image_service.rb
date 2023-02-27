@@ -135,12 +135,12 @@ module GeoblacklightSidecarImages
       conn.options.timeout = timeout
       conn.authorization :Basic, auth if auth
       conn.get.body
-    rescue Faraday::Error::ConnectionFailed
-      @metadata["error"] = "Faraday::Error::ConnectionFailed"
+    rescue Faraday::ConnectionFailed
+      @metadata["error"] = "Faraday::ConnectionFailed"
       @metadata["placeheld"] = true
       nil
-    rescue Faraday::Error::TimeoutError
-      @metadata["error"] = "Faraday::Error::TimeoutError"
+    rescue Faraday::TimeoutError
+      @metadata["error"] = "Faraday::TimeoutError"
       @metadata["placeheld"] = true
       nil
     end
