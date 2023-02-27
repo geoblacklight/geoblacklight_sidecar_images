@@ -41,6 +41,19 @@ else
   gem "image_processing", "~> 1.6"
   gem "statesman", ">= 3.4"
   gem "marcel", ">= 1.0"
-  gem "rails", ">= 5.2.5", "< 7.1"
+  if ENV["RAILS_VERSION"]
+    if ENV["RAILS_VERSION"] == "edge"
+      gem "rails", github: "rails/rails"
+      ENV["ENGINE_CART_RAILS_OPTIONS"] = "--edge --skip-turbolinks"
+    else
+      gem "rails", ENV["RAILS_VERSION"]
+    end
+  end
+end
+
+if File.exist?("spec/test_app_templates/Gemfile.extra")
+  # rubocop:disable Security/Eval
+  eval File.read("spec/test_app_templates/Gemfile.extra"), nil, "spec/test_app_templates/Gemfile.extra"
+  # rubocop:enable Security/Eval
 end
 # END ENGINE_CART BLOCK
