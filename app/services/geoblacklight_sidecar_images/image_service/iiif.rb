@@ -10,7 +10,7 @@ module GeoblacklightSidecarImages
       # @param [Integer] thumbnail size
       # @return [String] iiif thumbnail url
       def self.image_url(document, size)
-        "#{document.viewer_endpoint.gsub('info.json', '')}full/#{size},/0/default.jpg"
+        "#{document.viewer_endpoint.gsub("info.json", "")}full/#{size},/0/default.jpg"
       end
     end
   end

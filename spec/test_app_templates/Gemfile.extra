@@ -1,0 +1,1 @@
+gem 'faraday', ENV["FARADAY_VERSION"].to_s != "" ? ENV["FARADAY_VERSION"] : '>= 1.0'
