@@ -18,21 +18,23 @@ describe "geoblacklight_sidecar_images_tasks.rake" do
   # gblsci:images:harvest_destroy_batch
   # gblsci:images:harvest_failed_state_inspect
 
-  # zsh - bundle exec rake gblsci:images:harvest_doc_id\['stanford-cz128vq0535'\]
-  describe "gblsci:images:harvest_doc_id['stanford-cz128vq0535']" do
+  # DOC_ID='stanford-cz128vq0535' bundle exec rake gblsci:images:harvest_doc_id
+  describe "gblsci:images:harvest_doc_id" do
     before do
       Rails.application.load_tasks
     end
 
-    it "tasks can be invoked" do
-      # Enqueues job
-      ENV["DOC_ID"] = "princeton-sx61dn82p"
+    it "successfully attaches a thumbnail to a document sidecar" do
+      ENV["DOC_ID"] = "princeton-02870w62c"
       Rake::Task["gblsci:images:harvest_doc_id"].invoke
       expect(enqueued_jobs.size).to eq(1)
       
       perform_enqueued_jobs
+      sleep(2)
 
-      sd = SolrDocument.find(ENV["DOC_ID"])
+      Rake::Task["gblsci:images:harvest_states"].invoke
+
+      sd = SolrDocument.find(ENV["DOC_ID"])      
       expect(sd.sidecar.image?).to eq(true)
     end
   end
