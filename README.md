@@ -103,10 +103,10 @@ bundle exec rake gblsci:images:harvest_all
 
 #### Harvest an individual image
 
-Allows you to add images one document id at a time.
+Allows you to add images one document id at a time. Pass a DOC_ID env var.
 
 ```bash
-bundle exec rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
+DOC_ID='stanford-cz128vq0535' bundle exec rake gblsci:images:harvest_doc_id
 ```
 
 #### Harvest all incomplete states

@@ -19,8 +19,8 @@ namespace :gblsci do
 
   namespace :images do
     desc "Harvest image for specific document"
-    task :harvest_doc_id, [:doc_id] => [:environment] do |_t, args|
-      GeoblacklightSidecarImages::StoreImageJob.perform_later(args[:doc_id])
+    task harvest_doc_id: :environment do
+      GeoblacklightSidecarImages::StoreImageJob.perform_later(ENV['DOC_ID'])
     end
 
     desc "Harvest all images"
@@ -183,7 +183,7 @@ namespace :gblsci do
       ]
 
       states.each do |state|
-        SolrDocumentSidecar.in_state(state).each do |sc|
+        sidecars = SolrDocumentSidecar.in_state(state).each do |sc|
           puts "#{state} - #{sc.document_id} - #{sc.image_state.last_transition.metadata.inspect}"
         end
       end
