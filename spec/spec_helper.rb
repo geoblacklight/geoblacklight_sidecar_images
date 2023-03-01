@@ -6,6 +6,7 @@ require "simplecov"
 SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 
 SimpleCov.start "rails" do
+  # @TODO
   # refuse_coverage_drop
 end
 
