@@ -57,7 +57,7 @@ module GeoblacklightSidecarImages
 
       return nil unless image_data && @metadata["placeheld"] == false
 
-      temp_file = Tempfile.new([document_id, ".tmp"])
+      temp_file = Tempfile.new("#{document_id}.tmp")
       temp_file.binmode
       temp_file.write(image_data)
       temp_file.rewind
