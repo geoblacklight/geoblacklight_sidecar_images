@@ -24,7 +24,7 @@ describe GeoblacklightSidecarImages::ImageService do
     end
 
     it "returns image_url" do
-      expect(thumb_imgsvc.send(:image_url)).to eq "https://umedia.lib.umn.edu/sites/default/files/imagecache/square300/reference/562/image/jpeg/1089695.jpg"
+      expect(thumb_imgsvc.send(:image_url)).to eq "https://cdm16022.contentdm.oclc.org/utils/getthumbnail/collection/p16022coll206/id/133.jpg"
     end
 
     it "returns references if no settings thumbnail field value" do
