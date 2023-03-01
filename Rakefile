@@ -30,7 +30,6 @@ task ci: ["engine_cart:generate"] do
 end
 
 namespace :geoblacklight do
-
   namespace :internal do
     task seed: ["engine_cart:generate"] do
       within_test_app do
