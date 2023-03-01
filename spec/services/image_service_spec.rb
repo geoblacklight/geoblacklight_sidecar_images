@@ -19,6 +19,11 @@ describe GeoblacklightSidecarImages::ImageService do
       expect(iiif_imgsvc).to respond_to(:store)
     end
 
+    it "stores an image" do
+      iiif_imgsvc.store
+      expect(iiif_imgsvc.document.sidecar.image_state.current_state).to eq("succeeded")
+    end
+
     it "prioritizes settings thumbnail field" do
       expect(thumb_imgsvc.send(:gblsi_thumbnail_field?)).to be_truthy
     end

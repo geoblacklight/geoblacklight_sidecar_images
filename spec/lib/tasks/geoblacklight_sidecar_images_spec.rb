@@ -24,18 +24,10 @@ describe "geoblacklight_sidecar_images_tasks.rake" do
       Rails.application.load_tasks
     end
 
-    it "successfully attaches a thumbnail to a document sidecar" do
+    it "enqueues background job to harvest image" do
       ENV["DOC_ID"] = "princeton-02870w62c"
       Rake::Task["gblsci:images:harvest_doc_id"].invoke
       expect(enqueued_jobs.size).to eq(1)
-
-      perform_enqueued_jobs
-      sleep(2)
-
-      Rake::Task["gblsci:images:harvest_states"].invoke
-
-      sd = SolrDocument.find(ENV["DOC_ID"])
-      expect(sd.sidecar.image?).to eq(true)
     end
   end
 end
