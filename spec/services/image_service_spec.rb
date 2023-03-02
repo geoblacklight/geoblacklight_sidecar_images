@@ -19,12 +19,17 @@ describe GeoblacklightSidecarImages::ImageService do
       expect(iiif_imgsvc).to respond_to(:store)
     end
 
+    it "stores an image" do
+      iiif_imgsvc.store
+      expect(iiif_imgsvc.document.sidecar.image_state.current_state).to eq("succeeded")
+    end
+
     it "prioritizes settings thumbnail field" do
       expect(thumb_imgsvc.send(:gblsi_thumbnail_field?)).to be_truthy
     end
 
     it "returns image_url" do
-      expect(thumb_imgsvc.send(:image_url)).to eq "https://umedia.lib.umn.edu/sites/default/files/imagecache/square300/reference/562/image/jpeg/1089695.jpg"
+      expect(thumb_imgsvc.send(:image_url)).to eq "https://cdm16022.contentdm.oclc.org/utils/getthumbnail/collection/p16022coll206/id/133.jpg"
     end
 
     it "returns references if no settings thumbnail field value" do

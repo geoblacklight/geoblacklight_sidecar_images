@@ -57,7 +57,7 @@ module GeoblacklightSidecarImages
 
       return nil unless image_data && @metadata["placeheld"] == false
 
-      temp_file = Tempfile.new([document_id, ".tmp"])
+      temp_file = Tempfile.new("#{document_id}.tmp")
       temp_file.binmode
       temp_file.write(image_data)
       temp_file.rewind
@@ -128,7 +128,7 @@ module GeoblacklightSidecarImages
       return nil unless uri.scheme.include?("http")
 
       conn = Faraday.new(url: uri.normalize.to_s) do |b|
-        b.use FaradayMiddleware::FollowRedirects
+        b.use Geoblacklight::FaradayMiddleware::FollowRedirects
         b.adapter :net_http
       end
 
