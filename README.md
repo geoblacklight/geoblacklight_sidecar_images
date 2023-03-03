@@ -1,9 +1,7 @@
 # GeoBlacklight Sidecar Images
 
-[![Build Status](https://travis-ci.org/geoblacklight/geoblacklight_sidecar_images.svg?branch=master)](https://travis-ci.org/geoblacklight/geoblacklight_sidecar_images)
-[![Maintainability](https://api.codeclimate.com/v1/badges/88c14165af5459963011/maintainability)](https://codeclimate.com/github/geoblacklight/geoblacklight_sidecar_images/maintainability)
-[![Coverage Status](https://coveralls.io/repos/github/geoblacklight/geoblacklight_sidecar_images/badge.svg?branch=master)](https://coveralls.io/github/geoblacklight/geoblacklight_sidecar_images?branch=master)
-[![rubygem](https://badgen.net/rubygems/v/geoblacklight_sidecar_images)](https://badgen.net/rubygems/v/geoblacklight_sidecar_images)
+![CI](https://github.com/geoblacklight/geoblacklight_sidecar_images/actions/workflows/ruby.yml/badge.svg)
+[![Gem Version](https://img.shields.io/gem/v/geoblacklight_sidecar_images.svg)](https://github.com/geoblacklight/geoblacklight_sidecar_images/releases)
 
 Store local copies of remote imagery in GeoBlacklight.
 
@@ -105,10 +103,10 @@ bundle exec rake gblsci:images:harvest_all
 
 #### Harvest an individual image
 
-Allows you to add images one document id at a time.
+Allows you to add images one document id at a time. Pass a DOC_ID env var.
 
 ```bash
-bundle exec rake gblsci:images:harvest_doc_id['stanford-cz128vq0535']
+DOC_ID='stanford-cz128vq0535' bundle exec rake gblsci:images:harvest_doc_id
 ```
 
 #### Harvest all incomplete states
@@ -163,7 +161,7 @@ bundle exec rake gblsci:images:harvest_purge_orphans
 Remove sidecar objects and attached images via a CSV file of document ids
 
 ```bash
-bundle exec rake gblsci:images:harvest_purge_orphans
+bundle exec rake gblsci:images:harvest_destroy_batch
 ```
 
 ### Troubleshooting

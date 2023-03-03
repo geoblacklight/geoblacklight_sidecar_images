@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'addressable/uri'
-require 'mimemagic'
+require "addressable/uri"
+require "mimemagic"
 
 module GeoblacklightSidecarImages
   class ImageService
@@ -12,15 +12,15 @@ module GeoblacklightSidecarImages
       @document = document
 
       @metadata = {}
-      @metadata['solr_doc_id'] = document.id
-      @metadata['solr_version'] = @document.sidecar.version
-      @metadata['placeheld'] = false
+      @metadata["solr_doc_id"] = document.id
+      @metadata["solr_version"] = @document.sidecar.version
+      @metadata["placeheld"] = false
 
       @document.sidecar.image_state.transition_to!(:processing, @metadata)
 
       @logger ||= ActiveSupport::TaggedLogging.new(
         Logger.new(
-          Rails.root.join('log', "image_service_#{Rails.env}.log")
+          Rails.root.join("log", "image_service_#{Rails.env}.log")
         )
       )
     end
@@ -34,15 +34,15 @@ module GeoblacklightSidecarImages
 
       io_file = image_tempfile(@document.id)
 
-      if io_file.nil? || @metadata['placeheld'] == true
+      if io_file.nil? || @metadata["placeheld"] == true
         @document.sidecar.image_state.transition_to!(:placeheld, @metadata)
       else
         attach_io(io_file)
       end
 
       log_output
-    rescue Exception => e
-      @metadata['exception'] = e.inspect
+    rescue => e
+      @metadata["exception"] = e.inspect
       @document.sidecar.image_state.transition_to!(:failed, @metadata)
 
       log_output
@@ -51,18 +51,18 @@ module GeoblacklightSidecarImages
     private
 
     def image_tempfile(document_id)
-      @metadata['viewer_protocol']      = @document.viewer_protocol
-      @metadata['image_url']            = image_url
-      @metadata['gblsi_thumbnail_uri']  = gblsi_thumbnail_uri
+      @metadata["viewer_protocol"] = @document.viewer_protocol
+      @metadata["image_url"] = image_url
+      @metadata["gblsi_thumbnail_uri"] = gblsi_thumbnail_uri
 
-      return nil unless image_data && @metadata['placeheld'] == false
+      return nil unless image_data && @metadata["placeheld"] == false
 
-      temp_file = Tempfile.new([document_id, '.tmp'])
+      temp_file = Tempfile.new("#{document_id}.tmp")
       temp_file.binmode
       temp_file.write(image_data)
       temp_file.rewind
 
-      @metadata['image_tempfile'] = temp_file.inspect
+      @metadata["image_tempfile"] = temp_file.inspect
       temp_file
     end
 
@@ -71,11 +71,11 @@ module GeoblacklightSidecarImages
       # Pull the mimetype and file extension via MimeMagic
       mm = MimeMagic.by_magic(File.open(io))
 
-      @metadata['MimeMagic_type'] = mm.type
-      @metadata['MimeMagic_mediatype'] = mm.mediatype
-      @metadata['MimeMagic_subtype'] = mm.subtype
+      @metadata["MimeMagic_type"] = mm.type
+      @metadata["MimeMagic_mediatype"] = mm.mediatype
+      @metadata["MimeMagic_subtype"] = mm.subtype
 
-      if mm.mediatype == 'image'
+      if mm.mediatype == "image"
         @document.sidecar.image.attach(
           io: io,
           filename: "#{@document.id}.#{mm.subtype}",
@@ -91,12 +91,12 @@ module GeoblacklightSidecarImages
     def geoserver_credentials
       return unless restricted_wms_layer?
 
-      Settings.PROXY_GEOSERVER_AUTH.gsub('Basic ', '')
+      Settings.PROXY_GEOSERVER_AUTH.gsub("Basic ", "")
     end
 
     # Tests if geoserver credentials are set beyond the default.
     def geoserver_credentials_valid?
-      Settings.PROXY_GEOSERVER_AUTH != 'Basic base64encodedusername:password'
+      Settings.PROXY_GEOSERVER_AUTH != "Basic base64encodedusername:password"
     end
 
     # Tests if local thumbnail method is configured
@@ -125,23 +125,23 @@ module GeoblacklightSidecarImages
 
       uri = Addressable::URI.parse(image_url)
 
-      return nil unless uri.scheme.include?('http')
+      return nil unless uri.scheme.include?("http")
 
       conn = Faraday.new(url: uri.normalize.to_s) do |b|
-        b.use FaradayMiddleware::FollowRedirects
+        b.use Geoblacklight::FaradayMiddleware::FollowRedirects
         b.adapter :net_http
       end
 
       conn.options.timeout = timeout
       conn.authorization :Basic, auth if auth
       conn.get.body
-    rescue Faraday::Error::ConnectionFailed
-      @metadata['error'] = 'Faraday::Error::ConnectionFailed'
-      @metadata['placeheld'] = true
+    rescue Faraday::ConnectionFailed
+      @metadata["error"] = "Faraday::ConnectionFailed"
+      @metadata["placeheld"] = true
       nil
-    rescue Faraday::Error::TimeoutError
-      @metadata['error'] = 'Faraday::Error::TimeoutError'
-      @metadata['placeheld'] = true
+    rescue Faraday::TimeoutError
+      @metadata["error"] = "Faraday::TimeoutError"
+      @metadata["placeheld"] = true
       nil
     end
 
@@ -151,24 +151,24 @@ module GeoblacklightSidecarImages
     # dct references is used instead.
     def image_url
       @image_url ||= if gblsi_thumbnail_uri
-                       gblsi_thumbnail_uri
-                     elsif restricted_scanned_map?
-                       image_reference
-                     elsif restricted_wms_layer? && !geoserver_credentials_valid?
-                       image_reference
-                     else
-                       service_url || image_reference
-                     end
+        gblsi_thumbnail_uri
+      elsif restricted_scanned_map?
+        image_reference
+      elsif restricted_wms_layer? && !geoserver_credentials_valid?
+        image_reference
+      else
+        service_url || image_reference
+      end
     end
 
     # Checks if the document is Local restriced access and is a scanned map.
     def restricted_scanned_map?
-      @document.local_restricted? && @document['layer_geom_type_s'] == 'Image'
+      @document.local_restricted? && @document["layer_geom_type_s"] == "Image"
     end
 
     # Checks if the document is Local restriced access and is a wms layer.
     def restricted_wms_layer?
-      @document.local_restricted? && @document.viewer_protocol == 'wms'
+      @document.local_restricted? && @document.viewer_protocol == "wms"
     end
 
     # Gets the url for a specific service endpoint if the item is
@@ -186,15 +186,15 @@ module GeoblacklightSidecarImages
 
           protocol = @document.viewer_protocol
 
-          if protocol == 'map' || protocol.nil?
-            @metadata['error'] = 'Unsupported viewer protocol'
-            @metadata['placeheld'] = true
+          if protocol == "map" || protocol.nil?
+            @metadata["error"] = "Unsupported viewer protocol"
+            @metadata["placeheld"] = true
             return nil
           end
           "GeoblacklightSidecarImages::ImageService::#{protocol.camelcase}".constantize.image_url(@document, image_size)
         rescue NameError
-          @metadata['error'] = 'service_url NameError'
-          @metadata['placeheld'] = true
+          @metadata["error"] = "service_url NameError"
+          @metadata["placeheld"] = true
           return nil
         end
     end
@@ -203,7 +203,7 @@ module GeoblacklightSidecarImages
     def image_reference
       return nil if @document[@document.references.reference_field].nil?
 
-      JSON.parse(@document[@document.references.reference_field])['http://schema.org/thumbnailUrl']
+      JSON.parse(@document[@document.references.reference_field])["http://schema.org/thumbnailUrl"]
     end
 
     # Default image size.
@@ -218,7 +218,7 @@ module GeoblacklightSidecarImages
 
     # Capture metadata within image harvest log
     def log_output
-      @metadata['state'] = @document.sidecar.image_state.current_state
+      @metadata["state"] = @document.sidecar.image_state.current_state
       @metadata.each do |key, value|
         @logger.tagged(@document.id, key.to_s) { @logger.info value }
       end

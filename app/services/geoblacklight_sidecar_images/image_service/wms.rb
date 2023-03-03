@@ -15,11 +15,11 @@ module GeoblacklightSidecarImages
         # Swap proxy url with princeton geoserver url.
         # Thumbnail requests send geoserver auth.
         endpoint = document.viewer_endpoint.gsub(Settings.PROXY_GEOSERVER_URL,
-                                                 Settings.INSTITUTION_GEOSERVER_URL)
+          Settings.INSTITUTION_GEOSERVER_URL)
         "#{endpoint}/reflect?" \
-          '&FORMAT=image%2Fpng' \
-          '&TRANSPARENT=TRUE' \
-          "&LAYERS=#{document['layer_id_s']}" \
+          "&FORMAT=image%2Fpng" \
+          "&TRANSPARENT=TRUE" \
+          "&LAYERS=#{document["layer_id_s"]}" \
           "&WIDTH=#{size}" \
           "&HEIGHT=#{size}"
       end

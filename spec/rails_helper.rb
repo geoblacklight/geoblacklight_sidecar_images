@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
-ENV['RAILS_ENV'] ||= 'test'
+ENV["RAILS_ENV"] ||= "test"
 
-require 'spec_helper'
-require 'database_cleaner'
-require 'coveralls'
-Coveralls.wear!
-require 'engine_cart'
+require "spec_helper"
+require "database_cleaner"
+require "engine_cart"
 EngineCart.load_application!
 
-require 'rspec/rails'
+require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
 
-require 'geoblacklight_sidecar_images'
+require "geoblacklight_sidecar_images"
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -42,10 +40,10 @@ RSpec.configure do |config|
 
   config.before do
     DatabaseCleaner.strategy = if Capybara.current_driver == :rack_test
-                                 :transaction
-                               else
-                                 :truncation
-                               end
+      :transaction
+    else
+      :truncation
+    end
     DatabaseCleaner.start
   end
 

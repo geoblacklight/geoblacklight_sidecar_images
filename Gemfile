@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 # Declare your gem's dependencies in geoblacklight_sidecar_images.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
@@ -13,10 +13,6 @@ gemspec
 # your gem to rubygems.org.
 
 group :development, :test do
-  # Peg simplecov to < 0.8 until this is resolved:
-  # https://github.com/colszowka/simplecov/issues/281
-  gem 'coveralls', require: false
-  gem 'rubocop', '~> 1.9', require: false
 end
 
 # To use a debugger
@@ -26,22 +22,35 @@ end
 # engine_cart: 1.2.0
 # engine_cart stanza: 0.10.0
 # the below comes from engine_cart, a gem used to test this Rails engine gem in the context of a Rails app.
-file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
+file = File.expand_path("Gemfile", ENV["ENGINE_CART_DESTINATION"] || ENV["RAILS_ROOT"] || File.expand_path(".internal_test_app", File.dirname(__FILE__)))
 
 if File.exist?(file)
   begin
     eval_gemfile file
   rescue Bundler::GemfileError => e
-    Bundler.ui.warn '[EngineCart] Skipping Rails application dependencies:'
+    Bundler.ui.warn "[EngineCart] Skipping Rails application dependencies:"
     Bundler.ui.warn e.message
   end
 else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
-  gem 'geoblacklight', '>= 2.0'
-  gem 'mini_magick', '~> 4.9.4'
-  gem 'image_processing', '~> 1.6'
-  gem 'statesman', '>= 3.4'
-  gem 'marcel', '>= 1.0'
-  gem 'rails', '>= 5.2.5', '< 6.2'
+  gem "geoblacklight", ">= 2.0"
+  gem "mini_magick", "~> 4.9.4"
+  gem "image_processing", "~> 1.6"
+  gem "statesman", ">= 3.4"
+  gem "marcel", ">= 1.0"
+  if ENV["RAILS_VERSION"]
+    if ENV["RAILS_VERSION"] == "edge"
+      gem "rails", github: "rails/rails"
+      ENV["ENGINE_CART_RAILS_OPTIONS"] = "--edge --skip-turbolinks"
+    else
+      gem "rails", ENV["RAILS_VERSION"]
+    end
+  end
+end
+
+if File.exist?("spec/test_app_templates/Gemfile.extra")
+  # rubocop:disable Security/Eval
+  eval File.read("spec/test_app_templates/Gemfile.extra"), nil, "spec/test_app_templates/Gemfile.extra"
+  # rubocop:enable Security/Eval
 end
 # END ENGINE_CART BLOCK

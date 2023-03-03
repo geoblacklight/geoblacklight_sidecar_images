@@ -1,33 +1,69 @@
 # frozen_string_literal: true
 
-require 'rails'
+require "rails"
 begin
-  require 'bundler/setup'
-  require 'bundler/gem_tasks'
+  require "bundler/setup"
+  require "bundler/gem_tasks"
 rescue LoadError
-  puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
+  puts "You must `gem install bundler` and `bundle install` to run rake tasks"
 end
 
 Bundler::GemHelper.install_tasks
 
-require 'solr_wrapper'
+require "solr_wrapper"
 
-require 'rspec/core/rake_task'
+require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 
-require 'rubocop/rake_task'
+require "rubocop/rake_task"
 RuboCop::RakeTask.new(:rubocop)
 
-require 'solr_wrapper/rake_task'
-require 'engine_cart/rake_task'
-require 'geoblacklight_sidecar_images/version'
+require "solr_wrapper/rake_task"
+require "engine_cart/rake_task"
+require "geoblacklight_sidecar_images/version"
 
-task ci: ['engine_cart:generate'] do
-  ENV['environment'] = 'test'
-  SolrWrapper.wrap do |solr|
-    solr.with_collection(name: 'blacklight-core', dir: File.join(__dir__, 'solr', 'conf')) do
-      # run the tests
-      Rake::Task['spec'].invoke
+desc "Run test suite"
+task ci: ["engine_cart:generate"] do
+  ENV["environment"] = "test"
+  # run the tests
+  Rake::Task["spec"].invoke
+end
+
+namespace :geoblacklight do
+  namespace :internal do
+    task seed: ["engine_cart:generate"] do
+      within_test_app do
+        system "bundle exec rake gblsci:sample_data:seed"
+        system "bundle exec rake geoblacklight:downloads:mkdir"
+      end
+    end
+  end
+
+  desc "Run Solr and seed with sample data"
+  task :solr do
+    if File.exist? EngineCart.destination
+      within_test_app do
+        system "bundle update"
+      end
+    else
+      Rake::Task["engine_cart:generate"].invoke
+    end
+
+    SolrWrapper.wrap(port: "8983") do |solr|
+      solr.with_collection(name: "blacklight-core", dir: File.join(File.expand_path(".", File.dirname(__FILE__)), "solr", "conf")) do
+        Rake::Task["geoblacklight:internal:seed"].invoke
+
+        within_test_app do
+          puts "\nSolr server running: http://localhost:#{solr.port}/solr/#/blacklight-core"
+          puts "\n^C to stop"
+          puts " "
+          begin
+            sleep
+          rescue Interrupt
+            puts "Shutting down..."
+          end
+        end
+      end
     end
   end
 end
