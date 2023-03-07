@@ -128,7 +128,7 @@ module GeoblacklightSidecarImages
       return nil unless uri.scheme.include?("http")
 
       conn = Faraday.new(url: uri.normalize.to_s) do |b|
-        b.use Geoblacklight::FaradayMiddleware::FollowRedirects
+        b.use FaradayMiddleware::FollowRedirects
         b.adapter :net_http
       end
 
