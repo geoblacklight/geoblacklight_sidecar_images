@@ -33,10 +33,15 @@ This GeoBlacklight plugin captures remote images from geographic web services an
 
 ### Existing GeoBlacklight Instance
 
-Add the gem to your Gemfile.
+GeoBlacklight v4 with Aardvark metadata / Add the gem to your Gemfile.
 
 ```ruby
-gem 'geoblacklight_sidecar_images'
+gem "geoblacklight_sidecar_images", "~> 1.0"
+```
+
+GeoBlacklight v3 with GBL v1.0 metadata / Add the gem to your Gemfile.
+```ruby
+gem "geoblacklight_sidecar_images", "~> 0.9.1", "< 1.0"
 ```
 
 Run the generator.
