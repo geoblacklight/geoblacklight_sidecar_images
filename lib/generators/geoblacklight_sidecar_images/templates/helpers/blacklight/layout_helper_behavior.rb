@@ -16,7 +16,7 @@ module Blacklight
     # Attributes to add to the <html> tag (e.g. lang and dir)
     # @return [Hash]
     def html_tag_attributes
-      { lang: I18n.locale }
+      {lang: I18n.locale}
     end
 
     ##
@@ -30,14 +30,14 @@ module Blacklight
     # Classes used for sizing the main content of a Blacklight page
     # @return [String]
     def main_content_classes
-      'col-lg-9'
+      "col-lg-9"
     end
 
     ##
     # Classes used for sizing the sidebar content of a Blacklight page
     # @return [String]
     def sidebar_classes
-      'page-sidebar col-lg-3'
+      "page-sidebar col-lg-3"
     end
 
     ##
@@ -45,7 +45,7 @@ module Blacklight
     # overwritten to return 'container-fluid' for Bootstrap full-width layout
     # @return [String]
     def container_classes
-      'container-fluid'
+      "container-fluid"
     end
 
     ##
@@ -104,7 +104,7 @@ module Blacklight
     # @see render_body_class
     # @return [Array<String>]
     def extra_body_classes
-      @extra_body_classes ||= ["blacklight-#{controller.controller_name}", "blacklight-#{[controller.controller_name, controller.action_name].join('-')}"]
+      @extra_body_classes ||= ["blacklight-#{controller.controller_name}", "blacklight-#{[controller.controller_name, controller.action_name].join("-")}"]
     end
   end
 end
