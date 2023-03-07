@@ -10,7 +10,7 @@ describe GeoblacklightSidecarImages::ImageService do
   # IIIF
   let(:iiif_document) { SolrDocument.new(json_data("umich_iiif_jpg")) }
   let(:iiif_imgsvc) { described_class.new(iiif_document) }
-  
+
   # Image Map Layer
   let(:image_map_document) { SolrDocument.new(json_data("esri-image-map-layer")) }
   let(:image_map_imgsvc) { described_class.new(image_map_document) }
@@ -18,11 +18,11 @@ describe GeoblacklightSidecarImages::ImageService do
   # WMS
   let(:wms_document) { SolrDocument.new(json_data("actual-polygon1")) }
   let(:wms_imgsvc) { described_class.new(wms_document) }
-  
+
   # Thumbnail
   let(:thumb_document) { SolrDocument.new(json_data("umn_solr_thumb")) }
   let(:thumb_imgsvc) { described_class.new(thumb_document) }
-  
+
   # Tiled Map Layer
   let(:tiled_map_document) { SolrDocument.new(json_data("esri-tiled_map_layer")) }
   let(:tiled_map_imgsvc) { described_class.new(tiled_map_document) }
