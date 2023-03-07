@@ -19,7 +19,7 @@ module GeoblacklightSidecarImages
         "#{endpoint}/reflect?" \
           "&FORMAT=image%2Fpng" \
           "&TRANSPARENT=TRUE" \
-          "&LAYERS=#{document["layer_id_s"]}" \
+          "&LAYERS=#{document["gbl_wxsIdentifier_s"]}" \
           "&WIDTH=#{size}" \
           "&HEIGHT=#{size}"
       end

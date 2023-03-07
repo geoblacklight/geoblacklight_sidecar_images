@@ -17,7 +17,9 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
     end
 
     def generate_gblsci_assets
-      copy_file "gblsci.scss", "app/assets/stylesheets/gblsci.scss"
+      inject_into_file "app/assets/stylesheets/application.scss", after: "@import 'geoblacklight';\n" do
+        "@import 'geoblacklight_sidecar_images/gblsci';"
+      end
     end
 
     def generate_gblsci_example_docs
@@ -34,6 +36,10 @@ GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'"
 
     def generate_gblsci_views
       generate "geoblacklight_sidecar_images:views"
+    end
+
+    def generate_gblsci_helpers
+      generate "geoblacklight_sidecar_images:helpers"
     end
 
     def generate_action_storage

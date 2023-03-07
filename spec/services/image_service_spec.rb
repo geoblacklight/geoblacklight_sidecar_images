@@ -27,6 +27,10 @@ describe GeoblacklightSidecarImages::ImageService do
   let(:tiled_map_document) { SolrDocument.new(json_data("esri-tiled_map_layer")) }
   let(:tiled_map_imgsvc) { described_class.new(tiled_map_document) }
 
+  # Placeholder Image
+  let(:placeholder_document) { SolrDocument.new(json_data("placeholder")) }
+  let(:placeholder_imgsvc) { described_class.new(placeholder_document) }
+
   describe "#store" do
     it "responds to store" do
       expect(iiif_imgsvc).to respond_to(:store)
@@ -65,6 +69,12 @@ describe GeoblacklightSidecarImages::ImageService do
       # Doc: tufts-cambridgegrid100-04
       wms_imgsvc.store
       expect(wms_imgsvc.document.sidecar.image_state.current_state).to eq("succeeded")
+    end
+
+    it "placeholders a doc without an imageservice" do
+      # Doc: mit-001145244
+      placeholder_imgsvc.store
+      expect(placeholder_imgsvc.document.sidecar.image_state.current_state).to eq("placeheld")
     end
 
     it "prioritizes settings thumbnail field" do
