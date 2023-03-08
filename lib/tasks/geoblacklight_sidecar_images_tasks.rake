@@ -36,7 +36,7 @@ namespace :gblsci do
       results.docs.each do |document|
         sleep(1)
         begin
-          GeoblacklightSidecarImages::StoreImageJob.perform_later(document["layer_slug_s"])
+          GeoblacklightSidecarImages::StoreImageJob.perform_later(document["id"])
         rescue Blacklight::Exceptions::RecordNotFound
           next
         end

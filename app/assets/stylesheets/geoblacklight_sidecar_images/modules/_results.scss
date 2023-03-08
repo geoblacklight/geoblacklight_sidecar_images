@@ -1,11 +1,35 @@
 // GBLSCI results
-.media {
-  img,span {
-    min-width: 100px;
-    max-width: 100px;
-    text-align: center;
+#documents {
+  .index_title {
+    font-size: 1rem;
   }
-  span.icon.square {
-    font-size:3rem;
+
+  .status-icons {
+    display: inline-block;
+
+    span {
+      min-width: 0px;
+    }
+  }
+
+  .thumbnail {
+    height: 100px;
+    width: 100px;
+    margin-left:auto;
+    margin-right: auto;
+    img {
+      max-height: 160px;
+      width: inherit;
+    }
+  }
+
+  .icon .blacklight-icons {
+    height: 4.5rem;
+    width: 4.5rem;
+
+    svg {
+      height:95%;
+      width:95%;
+    }
   }
 }
