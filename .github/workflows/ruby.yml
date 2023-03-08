@@ -13,13 +13,13 @@ jobs:
     strategy:
       matrix:
         bundler_version: [2.1.1]
-        faraday_version: ['~> 1.0']
+        faraday_version: ['~> 2.0']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7
+        ruby-version: 3.2
     - name: Install bundler
       run: gem install bundler -v ${{ matrix.bundler_version }}
     - name: Install dependencies
@@ -33,10 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby_version: ["3.0","2.7"]
+        ruby_version: ["3.2"]
         rails_version: [7.0.4.2, 6.1.7.2]
         bundler_version: [2.1.1]
-        faraday_version: ['~> 1.0']
+        faraday_version: ['~> 2.0']
 
     name: test ruby ${{ matrix.ruby_version }} / rails ${{ matrix.rails_version }} / faraday ${{ matrix.faraday_version }}
     steps:

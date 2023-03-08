@@ -17,6 +17,6 @@ module WmsRewriteConcern
   end
 
   def local?
-    fetch(Settings.FIELDS.PROVENANCE, "").casecmp(Settings.INSTITUTION_LOCAL_NAME).zero?
+    fetch(Settings.FIELDS.PROVIDER, "").casecmp(Settings.INSTITUTION_LOCAL_NAME).zero?
   end
 end
