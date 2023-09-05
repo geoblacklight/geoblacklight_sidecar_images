@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mimemagic", "~> 0.3"
   s.add_dependency "mini_magick", "~> 4.9.4"
   s.add_dependency "rails", ">= 5.2", "< 7.1"
-  s.add_dependency "statesman", ">= 3.4"
+  s.add_dependency "statesman", "~> 10.0.0"
 
   s.add_development_dependency "byebug"
   s.add_development_dependency "capybara"
