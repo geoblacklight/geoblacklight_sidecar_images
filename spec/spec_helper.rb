@@ -15,6 +15,7 @@ require "capybara/rspec"
 require "selenium-webdriver"
 require "webdrivers"
 
+require "rails/all"
 require "blacklight"
 require "geoblacklight"
 require "geoblacklight_sidecar_images"
