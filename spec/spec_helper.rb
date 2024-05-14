@@ -1,23 +1,28 @@
 # frozen_string_literal: true
 
-ENV["RAILS_ENV"] = "test"
+ENV["RAILS_ENV"] ||= "test"
 
-require "simplecov"
-SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
+# require "simplecov"
+# SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 
-SimpleCov.start "rails" do
-  # @TODO
-  # refuse_coverage_drop
-end
+# SimpleCov.start "rails" do
+# @TODO
+# refuse_coverage_drop
+# end
 
 require "database_cleaner"
+require "capybara/rspec"
+require "selenium-webdriver"
+require "webdrivers"
+
+require "blacklight"
+require "geoblacklight"
+require "geoblacklight_sidecar_images"
+
 require "engine_cart"
 EngineCart.load_application!
 
 require "rspec/rails"
-require "capybara/rspec"
-require "selenium-webdriver"
-require "webdrivers"
 
 def json_data(filename)
   file_content = file_fixture("#{filename}.json").read
@@ -25,6 +30,9 @@ def json_data(filename)
 end
 
 RSpec.configure do |config|
+  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+  config.fixture_paths = "#{::Rails.root}/spec/fixtures"
+
   config.use_transactional_fixtures = false
 
   config.before do
@@ -35,4 +43,8 @@ RSpec.configure do |config|
   config.after do
     DatabaseCleaner.clean
   end
+end
+
+def main_app
+  Rails.application.class.routes.url_helpers
 end
