@@ -12,7 +12,7 @@ module GeoblacklightSidecarImages
     DESCRIPTION
 
     def set_active_storage_processor
-      app_config = <<-"APP"
+      app_config = <<-APP
       
         config.active_storage.variant_processor = :mini_magick
       APP
