@@ -19,7 +19,7 @@ This GeoBlacklight plugin captures remote images from geographic web services an
 
 ## Requirements
 
-* [Ruby on Rails >= 6.1.7](https://weblog.rubyonrails.org/releases/)
+* [Ruby on Rails >= 5.2, < 8.0](https://weblog.rubyonrails.org/releases/)
 * [GeoBlacklight v4 or v3](https://github.com/geoblacklight/geoblacklight)
 * [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
@@ -220,7 +220,7 @@ document.sidecar.image.attached?
 document.sidecar.image.variable?
 
 # Example image_tag with resize
-<%= image_tag document.sidecar.image.variant(resize: "100x100"), {class: 'media-object'} %>
+<%= image_tag document.sidecar.image.variant(resize_to_fit: [100, 100]), {class: 'media-object'} %>
 
 ```
 
@@ -241,7 +241,7 @@ Example for adding a thumbnail to the show page sidebar.
     <div class="card">
       <div class="card-header">Thumbnail</div>
       <div class="card-body">
-        <%= image_tag @document.sidecar.image.variant(resize: "200"), {class: 'mr-3'} %>
+        <%= image_tag @document.sidecar.image.variant(resize_to_fit: [200, 200]), {class: 'mr-3'} %>
       </div>
     </div>
   <% end %>
@@ -266,7 +266,7 @@ bundle exec rake gblsci:sample_data:seed
 # Run harvest
 bundle exec rake gblsci:images:harvest_all
 
-# Tail log
+# Tail image service log file
 tail -f log/image_service_development.log
 
 ```
