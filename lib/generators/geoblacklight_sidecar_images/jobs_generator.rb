@@ -12,7 +12,7 @@ module GeoblacklightSidecarImages
     DESCRIPTION
 
     def config_development_jobs_queue_adapter
-      job_config = <<-"JOBS"
+      job_config = <<-JOBS
         config.active_job.queue_adapter = :inline
       JOBS
 
