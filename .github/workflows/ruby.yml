@@ -34,9 +34,9 @@ jobs:
     strategy:
       matrix:
         ruby_version: ["3.0","2.7"]
-        rails_version: [7.0.4.2, 6.1.7.2]
+        rails_version: [7.1.3.4, 7.0.4.2, 6.1.7.2]
         bundler_version: [2.1.1]
-        faraday_version: ['~> 1.0']
+        faraday_version: 7.2.0, ['~> 1.0']
 
     name: test ruby ${{ matrix.ruby_version }} / rails ${{ matrix.rails_version }} / faraday ${{ matrix.faraday_version }}
     steps:
