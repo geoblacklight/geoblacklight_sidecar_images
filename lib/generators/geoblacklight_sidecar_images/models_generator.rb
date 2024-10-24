@@ -22,7 +22,7 @@ module GeoblacklightSidecarImages
     end
 
     def include_sidecar_solrdocument
-      sidecar = <<-"SIDECAR"
+      sidecar = <<-SIDECAR
         def sidecar
           # Find or create, and set version
           sidecar = SolrDocumentSidecar.where(
