@@ -19,7 +19,7 @@ This GeoBlacklight plugin captures remote images from geographic web services an
 
 ## Requirements
 
-* [Ruby on Rails >= 5.2.5](https://weblog.rubyonrails.org/releases/)
+* [Ruby on Rails ">= 5.2 < 7.3"](https://weblog.rubyonrails.org/releases/)
 * [GeoBlacklight >= 3.3](https://github.com/geoblacklight/geoblacklight)
 * [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
