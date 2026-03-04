@@ -5,9 +5,13 @@
       <div class='col-2 thumbnail'>
         <% if document.sidecar.image.attached? %>
           <% if document.sidecar.image.variable? %>
-            <%= image_tag document.sidecar.image.variant(resize_to_fit: [200, 200]) %>
+            <%= image_tag document.sidecar.image.variant(resize_to_fit: [200, 200]),
+                          alt: "",
+                          role: "presentation" %>
           <% else %>
-            <%= image_tag document.sidecar.image %>
+            <%= image_tag document.sidecar.image,
+                          alt: "",
+                          role: "presentation" %>
           <% end %>
         <% else %>
           <span class="icon square" title="<%=document[Settings.FIELDS.RESOURCE_CLASS]%>">
