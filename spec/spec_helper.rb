@@ -2,6 +2,8 @@
 
 ENV["RAILS_ENV"] ||= "test"
 
+require "logger"
+
 # require "simplecov"
 # SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 
@@ -15,9 +17,14 @@ require "capybara/rspec"
 require "selenium-webdriver"
 require "webdrivers"
 
-require "logger"
 require "rails/all"
 require "blacklight"
+blacklight_root = Gem.loaded_specs.fetch("blacklight").full_gem_path
+
+# Rails 7.1 does not reliably autoload these Blacklight concerns before the
+# EngineCart app boots, so load them explicitly for the test app.
+require File.join(blacklight_root, "app/controllers/concerns/blacklight/search_fields")
+require File.join(blacklight_root, "app/controllers/concerns/blacklight/controller")
 require "geoblacklight"
 require "geoblacklight_sidecar_images"
 
