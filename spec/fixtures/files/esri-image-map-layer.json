@@ -45,7 +45,7 @@
   ],
   "dct_accessRights_s": "Public",
   "dct_format_s": "GeoTIFF",
-  "dct_references_s": "{\"http://schema.org/url\":\"https://mapsweb.lib.purdue.edu/wabashriver/\",\"http://schema.org/downloadUrl\":[{\"label\":\"GeoTIFF\",\"url\":\"https://mapsweb.lib.purdue.edu/datasets/Wabash1929/wabash_topo_27.tif.zip\"}],\"urn:x-esri:serviceType:ArcGIS#ImageMapLayer\":\"https://mapsweb.lib.purdue.edu/arcgis/rest/services/Purdue/wabashtopo/ImageServer\",\"http://www.isotc211.org/schemas/2005/gmd/\":\"http://64.90.181.107/geonetwork/srv/api/records/32653ed6-8d83-4692-8a06-bf13ffe2c018/formatters/xml\"}",
+  "dct_references_s": "{\"http://schema.org/url\":\"https://mapsweb.lib.purdue.edu/wabashriver/\",\"http://schema.org/downloadUrl\":[{\"label\":\"GeoTIFF\",\"url\":\"https://mapsweb.lib.purdue.edu/datasets/Wabash1929/wabash_topo_27.tif.zip\"}],\"urn:x-esri:serviceType:ArcGIS#ImageMapLayer\":\"https://sampleserver6.arcgisonline.com/arcgis/rest/services/CharlotteLAS/ImageServer\",\"http://www.isotc211.org/schemas/2005/gmd/\":\"http://64.90.181.107/geonetwork/srv/api/records/32653ed6-8d83-4692-8a06-bf13ffe2c018/formatters/xml\"}",
   "gbl_mdModified_dt": "2018-07-20T18:08:03Z",
   "gbl_mdVersion_s": "Aardvark",
   "dct_isPartOf_sm": "purdue-collection-purdue-georeferenced-imagery"

@@ -31,7 +31,7 @@
   "dct_accessRights_s": "Public",
   "dct_format_s": "GeoTIFF",
   "gbl_wxsIdentifier_s": "esri-tiled-map-layer",
-  "dct_references_s": "{\"urn:x-esri:serviceType:ArcGIS#TiledMapLayer\":\"https://services.arcgisonline.com/arcgis/rest/services/Specialty/World_Navigation_Charts/MapServer\",\"http://schema.org/downloadUrl\":[]}",
+  "dct_references_s": "{\"urn:x-esri:serviceType:ArcGIS#TiledMapLayer\":\"https://sampleserver6.arcgisonline.com/arcgis/rest/services/SF311/MapServer\",\"http://schema.org/downloadUrl\":[]}",
   "gbl_mdModified_dt": "2015-06-16T00:59:49Z",
   "gbl_mdVersion_s": "Aardvark"
 }
