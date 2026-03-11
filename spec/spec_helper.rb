@@ -15,6 +15,7 @@ require "capybara/rspec"
 require "selenium-webdriver"
 require "webdrivers"
 
+require "logger"
 require "rails/all"
 require "blacklight"
 require "geoblacklight"
