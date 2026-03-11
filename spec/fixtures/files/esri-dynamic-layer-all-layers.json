@@ -40,7 +40,7 @@
   "dcat_bbox": "ENVELOPE(-91.513518, -87.495214, 42.508348,  36.969972)",
   "dct_accessRights_s": "Public",
   "dct_format_s": "Shapefile",
-  "dct_references_s": "{\"urn:x-esri:serviceType:ArcGIS#DynamicMapLayer\":\"http://data.isgs.illinois.edu/arcgis/rest/services/Geology/Glacial_Boundaries/MapServer\",\"http://schema.org/url\":\"https://clearinghouse.isgs.illinois.edu/data/geology/glacial-boundaries\",\"http://schema.org/downloadUrl\":[{\"label\":\"Shapefile\",\"url\":\"https://clearinghouse.isgs.illinois.edu/sites/clearinghouse.isgs/files/Clearinghouse/data/ISGS/Geology/zips/IL_Glacial_Bndys_Py.zip\"}]}",
+  "dct_references_s": "{\"urn:x-esri:serviceType:ArcGIS#DynamicMapLayer\":\"https://sampleserver6.arcgisonline.com/arcgis/rest/services/SF311/MapServer\",\"http://schema.org/url\":\"https://clearinghouse.isgs.illinois.edu/data/geology/glacial-boundaries\",\"http://schema.org/downloadUrl\":[{\"label\":\"Shapefile\",\"url\":\"https://clearinghouse.isgs.illinois.edu/sites/clearinghouse.isgs/files/Clearinghouse/data/ISGS/Geology/zips/IL_Glacial_Bndys_Py.zip\"}]}",
   "gbl_mdModified_dt": "2018-08-02T17:00:40Z",
   "gbl_mdVersion_s": "Aardvark",
   "dct_isPartOf_sm": "illinois-collection-illinois-geospatial-data-clearinghouse"

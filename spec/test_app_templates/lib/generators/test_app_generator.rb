@@ -9,6 +9,16 @@ class TestAppGenerator < Rails::Generators::Base
   # into the test app, this generator will be run immediately
   # after setting up the application
 
+  def disable_include_all_helpers
+    return unless File.exist?("config/application.rb")
+
+    gsub_file(
+      "config/application.rb",
+      /(\s*config\.load_defaults\s+\d+\.\d+\n)/,
+      "\\1    config.action_controller.include_all_helpers = false\n"
+    )
+  end
+
   def add_gems
     gem "blacklight", "~> 7.0"
     gem "geoblacklight", ">= 3.0"
