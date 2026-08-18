@@ -14,8 +14,8 @@
                           role: "presentation" %>
           <% end %>
         <% else %>
-          <span class="icon square" title="<%=document[Settings.FIELDS.RESOURCE_CLASS]%>">
-            <%= geoblacklight_icon(document[Settings.FIELDS.RESOURCE_CLASS].first) %>
+          <span class="icon square" title="<%=document[GeoblacklightSidecarImages::FieldMap[:resource_class]]%>">
+            <%= geoblacklight_icon(document[GeoblacklightSidecarImages::FieldMap[:resource_class]].first) %>
           </span>
         <% end %>
       </div>

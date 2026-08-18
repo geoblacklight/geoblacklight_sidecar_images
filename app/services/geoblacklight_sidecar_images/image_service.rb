@@ -250,11 +250,11 @@ module GeoblacklightSidecarImages
     end
 
     def resource_type_field
-      Settings.FIELDS.RESOURCE_TYPE || "gbl_resourceType_sm"
+      GeoblacklightSidecarImages::FieldMap[:resource_type]
     end
 
     def resource_class_field
-      Settings.FIELDS.RESOURCE_CLASS || "gbl_resourceClass_sm"
+      GeoblacklightSidecarImages::FieldMap[:resource_class]
     end
 
     def image_size

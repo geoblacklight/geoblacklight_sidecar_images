@@ -21,7 +21,7 @@ module GeoblacklightSidecarImages
       end
 
       def self.wxs_identifier_field
-        Settings.FIELDS.WXS_IDENTIFIER || "gbl_wxsIdentifier_s"
+        GeoblacklightSidecarImages::FieldMap[:wxs_identifier]
       end
     end
   end

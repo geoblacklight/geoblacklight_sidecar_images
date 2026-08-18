@@ -19,7 +19,7 @@ module WmsRewriteConcern
     name = Settings.INSTITUTION_LOCAL_NAME.to_s
     return false if name.blank?
 
-    fetch(Settings.FIELDS.PROVIDER, "").casecmp(name).zero?
+    fetch(GeoblacklightSidecarImages::FieldMap[:provider], "").casecmp(name).zero?
   end
 
   private

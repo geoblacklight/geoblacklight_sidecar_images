@@ -195,15 +195,15 @@ module GeoblacklightSidecarImages
     end
 
     def title_field
-      Settings.FIELDS.TITLE || "dct_title_s"
+      GeoblacklightSidecarImages::FieldMap[:title]
     end
 
     def provider_field
-      Settings.FIELDS.PROVIDER || "schema_provider_s"
+      GeoblacklightSidecarImages::FieldMap[:provider]
     end
 
     def resource_type_field
-      Settings.FIELDS.RESOURCE_TYPE || "gbl_resourceType_sm"
+      GeoblacklightSidecarImages::FieldMap[:resource_type]
     end
   end
 end
