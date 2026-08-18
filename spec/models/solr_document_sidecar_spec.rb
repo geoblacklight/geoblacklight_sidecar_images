@@ -20,5 +20,12 @@ describe SolrDocumentSidecar do
     it "returns an image url only when attached" do
       expect(document.sidecar.image_url).to be_nil
     end
+
+    it "exposes an OGM thumbnail URL without creating extra sidecars" do
+      Settings.GBLSI_OGM_API_URL = "https://ogm.geo4lib.app/api/v1"
+      expect(document.ogm_thumbnail_url).to end_with("/resources/#{document.id}/thumbnail")
+    ensure
+      Settings.GBLSI_OGM_API_URL = ""
+    end
   end
 end

@@ -4,6 +4,10 @@ module GeoblacklightSidecarImages
   module SolrDocumentBehavior
     extend ActiveSupport::Concern
 
+    def ogm_thumbnail_url
+      GeoblacklightSidecarImages::OgmThumbnail.url_for(self)
+    end
+
     def sidecar
       record = SolrDocumentSidecar.find_or_initialize_by(
         document_id: id,

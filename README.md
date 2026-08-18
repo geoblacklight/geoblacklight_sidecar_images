@@ -75,7 +75,7 @@ local:
 config.active_storage.service = :local
 ```
 
-The install generator appends Sidecar Images settings to `config/settings.yml` (`GBLSI_THUMBNAIL_FIELD` and optional GeoServer proxy keys). Leave the GeoServer URLs blank unless you need authenticated local WMS harvesting.
+The install generator appends Sidecar Images settings to `config/settings.yml` (`GBLSI_THUMBNAIL_FIELD`, optional GeoServer proxy keys, and optional `GBLSI_OGM_API_URL`). Leave the GeoServer URLs blank unless you need authenticated local WMS harvesting. Leave `GBLSI_OGM_API_URL` blank unless you want to skip harvest and render OpenGeoMetadata API thumbnails instead.
 
 `SolrDocument#sidecar` is included by the engine. You do not need to copy a method into `app/models/solr_document.rb`. If you are upgrading from 1.x, you can remove the generator-injected `sidecar` method from that file.
 
@@ -100,6 +100,8 @@ bundle exec rake gblsci:sample_data:seed
 ## Rake tasks
 
 ### Harvest images
+
+Harvest is only needed when you store thumbnails in Active Storage. If `GBLSI_OGM_API_URL` is set, skip these tasks and see [OpenGeoMetadata API thumbnails](#opengeometadata-api-thumbnails).
 
 #### Harvest all images
 
@@ -208,6 +210,22 @@ If you add a thumbnail uri to your geoblacklight solr documents...
 
 Then you can edit your GeoBlacklight settings.yml file to point at that solr field (`Settings.GBLSI_THUMBNAIL_FIELD`). Any docs in your index that have a value for that field will harvest the image at that URI instead of trying to retrieve an image via IIIF or the other web services.
 
+## OpenGeoMetadata API thumbnails
+
+To skip harvest, Active Storage, and the sidecar state machine entirely, point views at the OpenGeoMetadata API. Thumbnails are loaded in the browser from:
+
+`https://ogm.geo4lib.app/api/v1/resources/{id}/thumbnail`
+
+Set the API root in `config/settings.yml`:
+
+```yaml
+GBLSI_OGM_API_URL: 'https://ogm.geo4lib.app/api/v1'
+```
+
+`sidecar_thumbnail_tag document` then renders an `img` for that URL (for example `stanford-mp692kw6192` → `/resources/stanford-mp692kw6192/thumbnail`). No sidecar row is created. Harvest rake tasks are unused in this mode.
+
+The harvest/Active Storage path remains the default when `GBLSI_OGM_API_URL` is blank.
+
 ## View customization
 
 Use basic Active Storage patterns, or the engine helper, to display imagery in your application.
@@ -215,16 +233,13 @@ Use basic Active Storage patterns, or the engine helper, to display imagery in y
 ### Example methods
 
 ```ruby
-# Is there an image?
-document.sidecar.image.attached?
-
-# Can the image size be manipulated?
-document.sidecar.image.variable?
-
-# Helper (available in host views)
+# Helper (available in host views). Uses the OGM API when GBLSI_OGM_API_URL is
+# set; otherwise uses a harvested Active Storage attachment.
 <%= sidecar_thumbnail_tag document, size: [200, 200] %>
 
-# Example image_tag with resize
+# Harvested Active Storage (only when OGM API thumbnails are not enabled)
+document.sidecar.image.attached?
+document.sidecar.image.variable?
 <%= image_tag document.sidecar.image.variant(resize_to_fit: [100, 100]), {class: 'media-object'} %>
 ```
 
@@ -237,16 +252,7 @@ On GeoBlacklight 4, the install generator can copy a catalog `_index_split_defau
 Example for adding a thumbnail to the show page sidebar.
 
 ```ruby
-<% if @document.sidecar.image.attached? %>
-  <% if @document.sidecar.image.variable? %>
-    <div class="card">
-      <div class="card-header">Thumbnail</div>
-      <div class="card-body">
-        <%= sidecar_thumbnail_tag @document, size: [200, 200], class: "mr-3" %>
-      </div>
-    </div>
-  <% end %>
-<% end %>
+<%= sidecar_thumbnail_tag @document, size: [200, 200], class: "mr-3" %>
 ```
 
 ## Development

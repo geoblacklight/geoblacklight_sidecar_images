@@ -20,19 +20,30 @@ module GeoblacklightSidecarImages
         return
       end
 
-      if File.read(settings_path).include?("GBLSI_THUMBNAIL_FIELD")
-        say_status :skip, "GBLSI settings already present", :blue
-        return
+      contents = File.read(settings_path)
+
+      unless contents.include?("GBLSI_THUMBNAIL_FIELD")
+        append_to_file settings_path, <<~YAML
+
+          # GeoBlacklight Sidecar Images
+          INSTITUTION_LOCAL_NAME: ''
+          INSTITUTION_GEOSERVER_URL: ''
+          PROXY_GEOSERVER_URL: ''
+          PROXY_GEOSERVER_AUTH: 'Basic base64encodedusername:password'
+          GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'
+          # Optional: https://ogm.geo4lib.app/api/v1 (leave blank to harvest locally)
+          GBLSI_OGM_API_URL: ''
+        YAML
       end
+
+      return if File.read(settings_path).include?("GBLSI_OGM_API_URL")
 
       append_to_file settings_path, <<~YAML
 
-        # GeoBlacklight Sidecar Images
-        INSTITUTION_LOCAL_NAME: ''
-        INSTITUTION_GEOSERVER_URL: ''
-        PROXY_GEOSERVER_URL: ''
-        PROXY_GEOSERVER_AUTH: 'Basic base64encodedusername:password'
-        GBLSI_THUMBNAIL_FIELD: 'thumbnail_path_ss'
+        # OpenGeoMetadata API thumbnails (optional). When set, views render
+        # OGM thumbnail URLs and skip sidecar harvest / Active Storage.
+        # Example: https://ogm.geo4lib.app/api/v1
+        GBLSI_OGM_API_URL: ''
       YAML
     end
 
