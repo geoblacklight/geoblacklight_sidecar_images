@@ -12,34 +12,34 @@ Store local copies of remote imagery in GeoBlacklight.
 * [Development](#development)
 
 ## Description
+
 This GeoBlacklight plugin captures remote images from geographic web services and saves them locally. It borrows the concept of a [SolrDocumentSidecar](https://github.com/projectblacklight/spotlight/blob/master/app/models/spotlight/solr_document_sidecar.rb) from [Spotlight](https://github.com/projectblacklight/spotlight), to have an ActiveRecord-based "sidecar" to match each non-AR SolrDocument. This allows us to use [ActiveStorage](https://github.com/rails/rails/tree/master/activestorage) to attach images to our solr documents.
 
 ### Example Screenshot
+
 ![Screenshot](screenshot.png)
 
 ## Requirements
 
-* [Ruby on Rails >= 5.2, < 8.0](https://weblog.rubyonrails.org/releases/)
-* [GeoBlacklight v4 or v3](https://github.com/geoblacklight/geoblacklight)
-* [ImageMagick](https://github.com/ImageMagick/ImageMagick)
+* Ruby >= 3.3 (CI also runs on 3.4 and 4.0)
+* Rails >= 7.2, < 9 (tested on 7.2 with GeoBlacklight 4 and 8.1 with GeoBlacklight 5/6)
+* GeoBlacklight 4.x, 5.x, or 6.x
+* [libvips](https://www.libvips.org/) (Rails default) or [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 
 ### Suggested
 
-* Background Job Processor
-
-[Sidekiq](https://github.com/mperham/sidekiq) is an excellent choice if you need an opinion.
+* Background job processor — [Solid Queue](https://github.com/rails/solid_queue) (Rails 8) or [Sidekiq](https://github.com/sidekiq/sidekiq)
 
 ## Installation
 
-### Existing GeoBlacklight Instance
-
-GeoBlacklight v4 with Aardvark metadata / Add the gem to your Gemfile.
+### Existing GeoBlacklight instance
 
 ```ruby
-gem "geoblacklight_sidecar_images", "~> 1.0"
+gem "geoblacklight_sidecar_images", "~> 2.0"
 ```
 
-GeoBlacklight v3 with GBL v1.0 metadata / Add the gem to your Gemfile.
+GeoBlacklight v3 with GBL 1.0 metadata still uses the 0.9.x series:
+
 ```ruby
 gem "geoblacklight_sidecar_images", "~> 0.9.1", "< 1.0"
 ```
@@ -50,13 +50,15 @@ Run the generator.
 $ bin/rails generate geoblacklight_sidecar_images:install
 ```
 
+Use `--skip-views` on GeoBlacklight 5/6 apps that render results with ViewComponents rather than the GBL 4 split catalog partial. Use `--skip-assets` when the host is not using Sprockets.
+
 Run the database migration.
 
 ```bash
 $ bin/rails db:migrate
 ```
 
-Complete any necessary [Active Storage setup](https://edgeguides.rubyonrails.org/active_storage_overview.html#setup) steps, for example:
+Complete any necessary [Active Storage setup](https://guides.rubyonrails.org/active_storage_overview.html#setup) steps, for example:
 
 1. Add a config/storage.yml file
 
@@ -66,23 +68,24 @@ local:
   root: <%= Rails.root.join("storage") %>
 ```
 
-2. Add config/environments declarations, development.rb for example:  
+2. Add config/environments declarations, development.rb for example:
 
 ```
 # Store uploaded files on the local file system (see config/storage.yml for options)
 config.active_storage.service = :local
 ```
 
-### New GeoBlacklight Instance
+The install generator appends Sidecar Images settings to `config/settings.yml` (`GBLSI_THUMBNAIL_FIELD` and optional GeoServer proxy keys). Leave the GeoServer URLs blank unless you need authenticated local WMS harvesting.
 
-Create a new GeoBlacklight instance with the GBLSI code
+`SolrDocument#sidecar` is included by the engine. You do not need to copy a method into `app/models/solr_document.rb`. If you are upgrading from 1.x, you can remove the generator-injected `sidecar` method from that file.
+
+### New GeoBlacklight instance
 
 ```bash
 $ rails new app-name -m https://raw.githubusercontent.com/geoblacklight/geoblacklight_sidecar_images/develop/template.rb
-
 ```
 
-### Ingest Test Documents
+### Ingest test documents
 
 ```bash
   # Run your GBL instance
@@ -100,7 +103,7 @@ bundle exec rake gblsci:sample_data:seed
 
 #### Harvest all images
 
-Spawns background jobs to harvest images for all documents in your Solr index.
+Spawns background jobs to harvest images for all documents in your Solr index (paginated with Solr cursorMarks).
 
 ```bash
 bundle exec rake gblsci:images:harvest_all
@@ -141,40 +144,38 @@ We use a state machine library to track success/failure of our harvest tasks. Th
 SolrDocumentSidecar.in_state(:succeeded) => [#<SolrDocumentSidecar:0x0000000170697960 ... ]
 SolrDocumentSidecar.image.attached? => false
 SolrDocumentSidecar.image_state.current_state => "placeheld"
-SolrDocumentSidecar.image_state.last_transition => #<SidecarImageTransition id: 207, to_state: "placeheld", metadata: {"solr_doc_id"=>"stanford-cg357zz0321", "solr_version"=>1616509329754554368, "placeheld"=>true, "viewer_protocol"=>"wms", "image_url"=>"http://geowebservices-restricted.stanford.edu/geoserver/wms/reflect?&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=druid:cg357zz0321&WIDTH=300&HEIGHT=300", "service_url"=>"http://geowebservices-restricted.stanford.edu/geoserver/wms/reflect?&FORMAT=image%2Fpng&TRANSPARENT=TRUE&LAYERS=druid:cg357zz0321&WIDTH=300&HEIGHT=300", "gblsi_thumbnail_uri"=>false, "error"=>"Faraday::Error::ConnectionFailed"},...>
+SolrDocumentSidecar.image_state.last_transition => #<SidecarImageTransition id: 207, to_state: "placeheld", metadata: {"solr_doc_id"=>"stanford-cg357zz0321", ...>
 ```
 
 ### Destroy images
 
+Destructive tasks require `CONFIRM=1`.
+
 #### Remove everything
 
-Remove all sidecar objects and attached images
-
 ```bash
-bundle exec rake gblsci:images:harvest_purge_all
+CONFIRM=1 bundle exec rake gblsci:images:harvest_purge_all
 ```
 
 #### Remove orphaned AR objects
 
-Remove all sidecar objects and attached images for AR objects without a corresponding Solr document
-
 ```bash
-bundle exec rake gblsci:images:harvest_purge_orphans
+CONFIRM=1 bundle exec rake gblsci:images:harvest_purge_orphans
 ```
 
 #### Remove a batch
 
-Remove sidecar objects and attached images via a CSV file of document ids
+Remove sidecar objects and attached images via a CSV file of document ids at `tmp/destroy_batch.csv`.
 
 ```bash
-bundle exec rake gblsci:images:harvest_destroy_batch
+CONFIRM=1 bundle exec rake gblsci:images:harvest_destroy_batch
 ```
 
 ### Troubleshooting
 
 #### Harvest report
 
-Generate a CSV file of sidecar objects and associated image state. Useful for debugging problem items.
+Generate a CSV file of sidecar objects and associated image state under `tmp/`.
 
 ```bash
 bundle exec rake gblsci:images:harvest_report
@@ -197,21 +198,21 @@ If you add a thumbnail uri to your geoblacklight solr documents...
 ```json
 {
   ...
-  "dc_format_s":"TIFF",
-  "dc_creator_sm":["Minnesota. Department of Highways."],
-  "thumbnail_path_ss":"https://umedia.lib.umn.edu/sites/default/files/imagecache/square300/reference/562/image/jpeg/1089695.jpg",
-  "dc_type_s":"Still image",
+  "dct_format_s": "TIFF",
+  "dct_creator_sm": ["Minnesota. Department of Highways."],
+  "thumbnail_path_ss": "https://umedia.lib.umn.edu/sites/default/files/imagecache/square300/reference/562/image/jpeg/1089695.jpg",
+  "gbl_resourceClass_sm": ["Imagery"],
   ...
 }
 ```
 
-Then you can edit your GeoBlacklight settings.yml file to point at that solr field (Settings.GBLSI_THUMBNAIL_FIELD). Any docs in your index that have a value for that field will harvest the image at that URI instead of trying to retrieve an image via IIIF or the other web services.
+Then you can edit your GeoBlacklight settings.yml file to point at that solr field (`Settings.GBLSI_THUMBNAIL_FIELD`). Any docs in your index that have a value for that field will harvest the image at that URI instead of trying to retrieve an image via IIIF or the other web services.
 
 ## View customization
 
-Use basic Active Storage patterns to display imagery in your application.
+Use basic Active Storage patterns, or the engine helper, to display imagery in your application.
 
-### Example Methods
+### Example methods
 
 ```ruby
 # Is there an image?
@@ -220,40 +221,37 @@ document.sidecar.image.attached?
 # Can the image size be manipulated?
 document.sidecar.image.variable?
 
+# Helper (available in host views)
+<%= sidecar_thumbnail_tag document, size: [200, 200] %>
+
 # Example image_tag with resize
 <%= image_tag document.sidecar.image.variant(resize_to_fit: [100, 100]), {class: 'media-object'} %>
-
 ```
 
 ### Search results
 
-This GBL plugin includes a custom [catalog/_index_split_default.html.erb file](https://github.com/geoblacklight/geoblacklight_sidecar_images/blob/develop/lib/generators/geoblacklight_sidecar_images/templates/views/catalog/_index_split_default.html.erb). Look there for examples on calling the image method.
+On GeoBlacklight 4, the install generator can copy a catalog `_index_split_default.html.erb` partial. GeoBlacklight 5/6 apps should call `sidecar_thumbnail_tag` (or `document.sidecar.image`) from their result component instead of replacing Blacklight helpers.
 
 ### Show pages
 
 Example for adding a thumbnail to the show page sidebar.
 
-*catalog/_show_sidebar.html.erb*
-
 ```ruby
-# Add to end of file
 <% if @document.sidecar.image.attached? %>
   <% if @document.sidecar.image.variable? %>
     <div class="card">
       <div class="card-header">Thumbnail</div>
       <div class="card-body">
-        <%= image_tag @document.sidecar.image.variant(resize_to_fit: [200, 200]), {class: 'mr-3'} %>
+        <%= sidecar_thumbnail_tag @document, size: [200, 200], class: "mr-3" %>
       </div>
     </div>
   <% end %>
 <% end %>
-
 ```
 
 ## Development
 
 ```bash
-
 # Run test suite
 bundle exec rake ci
 
@@ -269,8 +267,12 @@ bundle exec rake gblsci:images:harvest_all
 
 # Tail image service log file
 tail -f log/image_service_development.log
+```
 
+Test against a specific stack with environment variables:
+
+```bash
+RAILS_VERSION=8.1.3 GEOBLACKLIGHT_VERSION="~> 5.3" bundle exec rake ci
 ```
 
 [See Localhost Results](http://localhost:3000/?per_page=50&q=&search_field=all_fields)
-

@@ -1,4 +1,6 @@
-class CreateSolrDocumentSidecars < ActiveRecord::Migration[5.2]
+# frozen_string_literal: true
+
+class CreateSolrDocumentSidecars < ActiveRecord::Migration[7.2]
   def change
     create_table :solr_document_sidecars do |t|
       t.string "document_id"

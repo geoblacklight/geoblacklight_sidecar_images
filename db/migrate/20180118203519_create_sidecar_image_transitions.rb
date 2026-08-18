@@ -1,4 +1,6 @@
-class CreateSidecarImageTransitions < ActiveRecord::Migration[5.2]
+# frozen_string_literal: true
+
+class CreateSidecarImageTransitions < ActiveRecord::Migration[7.2]
   def change
     create_table :sidecar_image_transitions do |t|
       t.string :to_state, null: false
@@ -7,13 +9,9 @@ class CreateSidecarImageTransitions < ActiveRecord::Migration[5.2]
       t.bigint :solr_document_sidecar_id, null: false
       t.boolean :most_recent
 
-      # If you decide not to include an updated timestamp column in your transition
-      # table, you'll need to configure the `updated_timestamp_column` setting in your
-      # migration class.
       t.timestamps null: false
     end
 
-    # Foreign keys are optional, but highly recommended
     add_foreign_key :sidecar_image_transitions, :solr_document_sidecars
 
     add_index(:sidecar_image_transitions,
@@ -23,7 +21,6 @@ class CreateSidecarImageTransitions < ActiveRecord::Migration[5.2]
     add_index(:sidecar_image_transitions,
       [:solr_document_sidecar_id, :most_recent],
       unique: true,
-
       name: "index_sidecar_image_transitions_parent_most_recent")
   end
 end

@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 require "csv"
+require "fileutils"
 
 namespace :gblsci do
   namespace :sample_data do
@@ -25,34 +28,35 @@ namespace :gblsci do
 
     desc "Harvest all images"
     task harvest_all: :environment do
-      query = "*:*"
-      index = Geoblacklight::SolrDocument.index
-      results = index.send_and_receive(index.blacklight_config.solr_path,
-        q: query,
-        fl: "*",
-        rows: 100_000_000)
-      # num_found = results.response[:numFound]
-      # doc_counter = 0
-      results.docs.each do |document|
-        sleep(1)
-        begin
+      conn = Blacklight.default_index.connection
+      cursor = "*"
+      loop do
+        response = conn.get("select", params: {
+          q: "*:*",
+          fl: "id",
+          rows: 500,
+          sort: "id asc",
+          cursorMark: cursor
+        })
+        docs = response.dig("response", "docs") || []
+        break if docs.empty?
+
+        docs.each do |document|
           GeoblacklightSidecarImages::StoreImageJob.perform_later(document["id"])
         rescue Blacklight::Exceptions::RecordNotFound
           next
         end
+
+        next_cursor = response["nextCursorMark"]
+        break if next_cursor.blank? || next_cursor == cursor
+
+        cursor = next_cursor
       end
     end
 
     desc "Hash of SolrDocumentSidecar image state counts"
     task harvest_states: :environment do
-      states = [
-        :initialized,
-        :queued,
-        :processing,
-        :succeeded,
-        :failed,
-        :placeheld
-      ]
+      states = %i[initialized queued processing succeeded failed placeheld]
 
       col_state = {}
       states.each do |state|
@@ -67,13 +71,7 @@ namespace :gblsci do
 
     desc "Re-queues incomplete states for harvesting"
     task harvest_retry: :environment do
-      states = [
-        :initialized,
-        :queued,
-        :processing,
-        :failed,
-        :placeheld
-      ]
+      states = %i[initialized queued processing failed placeheld]
 
       states.each do |state|
         sidecars = SolrDocumentSidecar.in_state(state)
@@ -83,7 +81,7 @@ namespace :gblsci do
         sidecars.each do |sc|
           document = Geoblacklight::SolrDocument.find(sc.document_id)
           GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id)
-        rescue
+        rescue Blacklight::Exceptions::RecordNotFound
           puts "orphaned / #{sc.document_id}"
         end
       end
@@ -91,8 +89,8 @@ namespace :gblsci do
 
     desc "Write harvest state report (CSV)"
     task harvest_report: :environment do
-      # Create a CSV Dump of Results
-      file = "#{Rails.root}/public/#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sidecar_report.csv"
+      FileUtils.mkdir_p(Rails.root.join("tmp"))
+      file = Rails.root.join("tmp", "#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sidecar_report.csv")
 
       sidecars = SolrDocumentSidecar.all
 
@@ -113,16 +111,14 @@ namespace :gblsci do
         writer << header
 
         sidecars.each do |sc|
-          # cat = CatalogController.new
-
           document = Geoblacklight::SolrDocument.find(sc.document_id)
           writer << [
             sc.id,
             sc.document_id,
             sc.image_state.current_state,
-            document._source["layer_geom_type_s"],
-            document._source["dc_title_s"],
-            document._source["dct_provenance_s"],
+            document._source[GeoblacklightSidecarImages::HarvestTasks.resource_type_field] || document._source["layer_geom_type_s"],
+            document._source[GeoblacklightSidecarImages::HarvestTasks.title_field],
+            document._source[GeoblacklightSidecarImages::HarvestTasks.provider_field],
             sc.image_state.last_transition.metadata["exception"],
             sc.image_state.last_transition.metadata["viewer_protocol"],
             sc.image_state.last_transition.metadata["image_url"],
@@ -134,59 +130,80 @@ namespace :gblsci do
           next
         end
       end
+
+      puts "Wrote #{file}"
     end
 
-    desc "Destroy all harvested images and sidecar AR objects"
+    desc "Destroy all harvested images and sidecar AR objects (CONFIRM=1 required)"
     task harvest_purge_all: :environment do
-      # Remove all images
+      GeoblacklightSidecarImages::HarvestTasks.require_confirmation!
+
       sidecars = SolrDocumentSidecar.all
       sidecars.each do |sc|
-        sc.image.purge
+        sc.image.purge if sc.image.attached?
       end
 
-      # Delete all Transitions and Sidecars
       SidecarImageTransition.destroy_all
       SolrDocumentSidecar.destroy_all
     end
 
-    desc "Destroy orphaned images and sidecar AR objects"
-    # When a SolrDocumentSidecar AR object exists,
-    # but it's corresponding SolrDocument is no longer in the Solr index.
+    desc "Destroy orphaned images and sidecar AR objects (CONFIRM=1 required)"
     task harvest_purge_orphans: :environment do
-      # Remove all images
+      GeoblacklightSidecarImages::HarvestTasks.require_confirmation!
+
       sidecars = SolrDocumentSidecar.all
       sidecars.each do |sc|
         Geoblacklight::SolrDocument.find(sc.document_id)
-      rescue
+      rescue Blacklight::Exceptions::RecordNotFound
         sc.destroy
         puts "orphaned / #{sc.document_id} / destroyed"
       end
     end
 
-    desc "Destroy select sidecar AR objects by CSV file"
+    desc "Destroy select sidecar AR objects by CSV file (CONFIRM=1 required)"
     task harvest_destroy_batch: :environment do
-      # Expects a CSV file in Rails.root/tmp/destroy_batch.csv
-      #
-      # From your local machine, copy it up to production server like this:
-      # scp destroy_batch.csv swadm@geoprod:/swadm/var/www/geoblacklight/current/tmp/
+      GeoblacklightSidecarImages::HarvestTasks.require_confirmation!
+
       CSV.foreach("#{Rails.root}/tmp/destroy_batch.csv", headers: true) do |row|
         sc = SolrDocumentSidecar.find_by(document_id: row[0])
-        sc.destroy
-        puts "document_id - #{row[0]} - destroyed"
+        if sc
+          sc.destroy
+          puts "document_id - #{row[0]} - destroyed"
+        else
+          puts "document_id - #{row[0]} - not found"
+        end
       end
     end
 
     desc "Inspect failed state objects"
     task harvest_failed_state_inspect: :environment do
-      states = [
-        :failed
-      ]
-
-      states.each do |state|
-        SolrDocumentSidecar.in_state(state).each do |sc|
-          puts "#{state} - #{sc.document_id} - #{sc.image_state.last_transition.metadata.inspect}"
-        end
+      SolrDocumentSidecar.in_state(:failed).each do |sc|
+        puts "failed - #{sc.document_id} - #{sc.image_state.last_transition.metadata.inspect}"
       end
+    end
+  end
+end
+
+module GeoblacklightSidecarImages
+  module HarvestTasks
+    module_function
+
+    def require_confirmation!
+      return if ENV["CONFIRM"] == "1"
+
+      abort "Refusing to run a destructive harvest task without CONFIRM=1"
+    end
+
+    def title_field
+      Settings.FIELDS.TITLE || "dct_title_s"
+    end
+
+    def provider_field
+      Settings.FIELDS.PROVIDER || "schema_provider_s"
+    end
+
+    def resource_type_field
+      Settings.FIELDS.RESOURCE_TYPE || "gbl_resourceType_sm"
     end
   end
 end

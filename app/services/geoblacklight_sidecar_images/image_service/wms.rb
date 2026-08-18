@@ -3,25 +3,25 @@
 module GeoblacklightSidecarImages
   class ImageService
     module Wms
-      ##
-      # Formats and returns a thumbnail url from a Web Map Service endpoint.
-      # This utilizes the GeoServer specific 'reflect' service to generate
-      # parameters like bbox that are difficult to tweak without more detailed
-      # information about the layer.
-      # @param [SolrDocument]
-      # @param [Integer] thumbnail size
-      # @return [String] wms thumbnail url
       def self.image_url(document, size)
-        # Swap proxy url with princeton geoserver url.
-        # Thumbnail requests send geoserver auth.
-        endpoint = document.viewer_endpoint.gsub(Settings.PROXY_GEOSERVER_URL,
-          Settings.INSTITUTION_GEOSERVER_URL)
+        endpoint = document.viewer_endpoint.to_s
+        proxy = Settings.PROXY_GEOSERVER_URL.to_s
+        institution = Settings.INSTITUTION_GEOSERVER_URL.to_s
+        if proxy.present? && institution.present?
+          endpoint = endpoint.gsub(proxy, institution)
+        end
+
+        layer = document[wxs_identifier_field] || document["gbl_wxsIdentifier_s"]
         "#{endpoint}/reflect?" \
           "&FORMAT=image%2Fpng" \
           "&TRANSPARENT=TRUE" \
-          "&LAYERS=#{document["gbl_wxsIdentifier_s"]}" \
+          "&LAYERS=#{layer}" \
           "&WIDTH=#{size}" \
           "&HEIGHT=#{size}"
+      end
+
+      def self.wxs_identifier_field
+        Settings.FIELDS.WXS_IDENTIFIER || "gbl_wxsIdentifier_s"
       end
     end
   end

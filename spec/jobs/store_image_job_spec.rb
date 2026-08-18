@@ -8,9 +8,10 @@ describe GeoblacklightSidecarImages::StoreImageJob, type: :job do
   describe "#perform_later" do
     let(:document_attributes) { json_data("umn_iiif_jpg") }
 
-    it "stores an image" do
-      ActiveJob::Base.queue_adapter = :test
-      expect { GeoblacklightSidecarImages::StoreImageJob.perform_later(document.id) }.to have_enqueued_job(GeoblacklightSidecarImages::StoreImageJob)
+    it "enqueues a harvest job on the gblsci queue" do
+      expect {
+        described_class.perform_later(document.id)
+      }.to have_enqueued_job(described_class).on_queue("gblsci")
     end
   end
 end

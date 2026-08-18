@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
+require "simplecov"
+SimpleCov.start do
+  add_filter "/spec/"
+  add_filter "/.internal_test_app/"
+end
+
 ENV["RAILS_ENV"] ||= "test"
 
 require "logger"
+require "webmock/rspec"
 
-# require "simplecov"
-# SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
-
-# SimpleCov.start "rails" do
-# @TODO
-# refuse_coverage_drop
-# end
-
-require "database_cleaner"
 require "capybara/rspec"
 require "selenium-webdriver"
-require "webdrivers"
 
 require "rails/all"
 require "blacklight"
 blacklight_root = Gem.loaded_specs.fetch("blacklight").full_gem_path
 
-# Rails 7.1 does not reliably autoload these Blacklight concerns before the
-# EngineCart app boots, so load them explicitly for the test app.
-require File.join(blacklight_root, "app/controllers/concerns/blacklight/search_fields")
-require File.join(blacklight_root, "app/controllers/concerns/blacklight/controller")
+begin
+  require File.join(blacklight_root, "app/controllers/concerns/blacklight/search_fields")
+  require File.join(blacklight_root, "app/controllers/concerns/blacklight/controller")
+rescue LoadError
+  # Blacklight 8+ autoloads these
+end
+
 require "geoblacklight"
 require "geoblacklight_sidecar_images"
 
@@ -33,24 +33,24 @@ EngineCart.load_application!
 
 require "rspec/rails"
 
+WebMock.disable_net_connect!(allow_localhost: true)
+
+GEM_SPEC_ROOT = File.expand_path(__dir__)
+
 def json_data(filename)
-  file_content = file_fixture("#{filename}.json").read
+  file_content = File.read(File.join(GEM_SPEC_ROOT, "fixtures", "files", "#{filename}.json"))
   JSON.parse(file_content, symbolize_names: true)
 end
 
 RSpec.configure do |config|
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
-
-  config.use_transactional_fixtures = false
-
-  config.before do
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.start
+  if config.respond_to?(:fixture_paths=)
+    config.fixture_paths = [Rails.root.join("spec/fixtures")]
   end
 
-  config.after do
-    DatabaseCleaner.clean
+  config.use_transactional_fixtures = true
+
+  config.before do
+    ActiveJob::Base.queue_adapter = :test
   end
 end
 
