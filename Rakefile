@@ -22,11 +22,23 @@ RuboCop::RakeTask.new(:rubocop)
 require "solr_wrapper/rake_task"
 require "engine_cart/rake_task"
 require "geoblacklight_sidecar_images/version"
+require "fileutils"
+
+# EngineCart bundles the test app before TestAppGenerator runs. Copy Bundler
+# platform settings so Nokogiri uses the precompiled native gem.
+Rake::Task["engine_cart:inject_gemfile_extras"].enhance do
+  dest = File.join(EngineCart.destination, ".bundle")
+  FileUtils.mkdir_p(dest)
+  File.write(File.join(dest, "config"), <<~YAML)
+    ---
+    BUNDLE_FORCE_RUBY_PLATFORM: "false"
+    BUNDLE_SPECIFIC_PLATFORM: "true"
+  YAML
+end
 
 desc "Run test suite"
 task ci: ["engine_cart:generate"] do
   ENV["environment"] = "test"
-  # run the tests
   Rake::Task["spec"].invoke
 end
 

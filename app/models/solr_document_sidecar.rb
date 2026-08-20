@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 ##
-# Metadata for indexed documents
-class SolrDocumentSidecar < ApplicationRecord
+# ActiveRecord sidecar for a Solr document, with an attached thumbnail image.
+class SolrDocumentSidecar < GeoblacklightSidecarImages::ApplicationRecord
+  self.table_name = "solr_document_sidecars"
+
   include Statesman::Adapters::ActiveRecordQueries[
     transition_class: SidecarImageTransition,
     initial_state: :initialized
@@ -12,6 +14,7 @@ class SolrDocumentSidecar < ApplicationRecord
   has_many :sidecar_image_transitions, autosave: false, dependent: :destroy
   has_one_attached :image
 
+  # SolrDocument is not an ActiveRecord model. Reconstruct from the stored id.
   def document
     document_type.new document_type.unique_key => document_id
   end
@@ -35,7 +38,9 @@ class SolrDocumentSidecar < ApplicationRecord
     :initialized
   end
 
-  def self.image_url
+  def image_url
+    return unless image.attached?
+
     Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
   end
 

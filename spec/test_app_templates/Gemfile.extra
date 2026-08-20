@@ -1,2 +1,4 @@
-gem 'faraday', ENV["FARADAY_VERSION"].to_s != "" ? ENV["FARADAY_VERSION"] : '>= 1.0'
-gem 'devise'
+# frozen_string_literal: true
+
+gem "devise"
+gem "cgi" if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("4.0.0")
